@@ -4,6 +4,8 @@ import jsonServer from "json-server";
 // utils
 import data from "./db.json" assert { type: "json" };
 import { calculatePriceAfterTaxes } from "./utils.js";
+
+// Business logic
 import {
   deleteArticle,
   getArticles,
@@ -12,6 +14,11 @@ import {
   updateArticle,
   validateArticle,
 } from "./businessEntities/Article.js";
+import {
+  insertOrder,
+  validateOrderTypes,
+  validateStockOrder,
+} from "./businessEntities/Orders.js";
 
 const server = jsonServer.create();
 const router = jsonServer.router("db.json");
@@ -111,22 +118,24 @@ server.get("/orders", (_req, res) => {
 });
 
 server.post("/orders", (req, res) => {
-  // const { articleRefs } = req.body;
-  // // VALIDATE ORDER TYPES
-  // if (!Array.isArray(articleRefs)) return res.sendStatus(400);
-  // for (const artRef of articleRefs) {
-  //   const { ref, quantity } = artRef;
-  //   if (typeof ref !== "string" || typeof quantity !== "number")
-  //     return res.sendStatus(400);
-  // }
-  // // VALIDATE STOCK
-  // for (const artRef of articleRefs) {
-  //   const { ref, quantity } = artRef;
-  //   if (typeof ref !== "string" || typeof quantity !== "number")
-  //     return res.sendStatus(400);
-  // }
-  // UPDATE STOCK
+  const order = req.body;
+  // VALIDATE ORDER TYPES
+  let validation = validateOrderTypes(order);
+  if (!validation.ok) return res.status(400).send(validation.msg);
+  // VALIDATE STOCK
+  validation = validateStockOrder(order);
+  if (!validation.ok) return res.status(417).send(validation.msg);
+
+  // INSERT ORDER
+  let insertedOrder;
+  try {
+    insertedOrder = insertOrder(order);
+  } catch (error) {
+    return res.status(400).send(error.message || defaultDBError);
+  }
+
   // SUCCESSFUL RESPONSE
+  return res.send({ createdOrder: insertedOrder });
 });
 
 server.use(router);

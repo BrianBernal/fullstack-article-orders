@@ -1,4 +1,7 @@
+// libraries
 import { nanoid } from "nanoid";
+
+// utils
 import data from "../db.json" assert { type: "json" };
 import { validateTypes } from "../utils.js";
 
@@ -19,6 +22,7 @@ function validateArticle({ stock = 0, detail = {} }) {
     taxPercentage,
     ref = "id is optional in validation",
   } = detail;
+
   const typeValues = {
     strings: {
       name,
@@ -31,6 +35,7 @@ function validateArticle({ stock = 0, detail = {} }) {
       stock,
     },
   };
+
   const areValidValues = validateTypes(typeValues);
   if (!areValidValues) {
     validation.msg = "Invalid article values.";
@@ -50,6 +55,10 @@ function isRepeatedNameArticle(name) {
 // ACTIONS
 function getArticles() {
   return articles;
+}
+
+function getArticleByRef(ref = "") {
+  return articles.find((article) => article.detail.ref === ref);
 }
 
 function insertNewArticle(article) {
@@ -93,4 +102,11 @@ function deleteArticle(ref = "") {
 }
 
 export { validateArticle, isRepeatedNameArticle }; // VALIDATORS
-export { getArticles, insertNewArticle, updateArticle, deleteArticle }; // ACTIONS
+export {
+  // ACTIONS
+  getArticles,
+  getArticleByRef,
+  insertNewArticle,
+  updateArticle,
+  deleteArticle,
+};

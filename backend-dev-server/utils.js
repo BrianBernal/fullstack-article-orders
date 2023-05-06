@@ -20,25 +20,6 @@ function validateTypes(values = {}) {
   return true;
 }
 
-function validateArticleTypes(article = {}) {
-  const { name, description, priceNoTaxes, taxPercentage, stock } = article;
-  const typeValues = {
-    strings: {
-      name,
-      description,
-    },
-    numbers: {
-      priceNoTaxes,
-      taxPercentage,
-      stock,
-    },
-  };
-  const positiveNumbers = priceNoTaxes >= 0 && taxPercentage >= 0 && stock >= 0;
-  if (!positiveNumbers) return false;
-
-  return validateTypes(typeValues);
-}
-
 function calculatePriceAfterTaxes(priceNoTaxes, taxPercentage) {
   if (typeof priceNoTaxes !== "number" || typeof taxPercentage !== "number")
     throw Error("Incorrect number type");
@@ -47,9 +28,13 @@ function calculatePriceAfterTaxes(priceNoTaxes, taxPercentage) {
   return normalizeNumber(priceAfterTaxes);
 }
 
+function validationValue(ok = false, msg = "") {
+  return { ok, msg };
+}
+
 export {
   normalizeNumber,
   validateTypes,
   calculatePriceAfterTaxes,
-  validateArticleTypes,
+  validationValue,
 };
