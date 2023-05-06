@@ -1,20 +1,24 @@
 {
   "articles": [
     {
-      "ref": "first-art",
-      "name": "mouse",
-      "description": "Ergonomic mouse to care the wrist",
-      "priceNoTaxes": 30,
-      "taxPercentage": 10,
-      "stock": 5
+      "stock": 1,
+      "detail": {
+        "ref": "first-art",
+        "name": "mouse",
+        "description": "Ergonomic mouse to care the wrist",
+        "priceNoTaxes": 30,
+        "taxPercentage": 10
+      }
     },
     {
-      "ref": "second-art",
-      "name": "mechanical keyboard",
-      "description": "Mechanical keyboard, cherry mx red, for cool people",
-      "priceNoTaxes": 90,
-      "taxPercentage": 10,
-      "stock": 3
+      "stock": 2,
+      "detail": {
+        "ref": "second-art",
+        "name": "mechanical keyboard",
+        "description": "Mechanical keyboard, cherry mx red, for cool people",
+        "priceNoTaxes": 90,
+        "taxPercentage": 10
+      }
     }
   ],
   "orders": [

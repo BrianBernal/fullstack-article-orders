@@ -8,7 +8,7 @@
     "build": "tsc && vite build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "serve:data": "node backend-dev-server/server.js"
+    "serve:data": "clear && node backend-dev-server/server.js"
   },
   "dependencies": {
     "react": "^18.2.0",

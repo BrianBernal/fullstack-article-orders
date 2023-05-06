@@ -29,32 +29,35 @@ server.post("/articles", (req, res) => {
     description,
     priceNoTaxes,
     taxPercentage,
-    stock,
   };
 
   // VALIDATE TYPES
-  const areValidTypes = validateArticleTypes(receiveArticle);
+  const areValidTypes = validateArticleTypes({ ...receiveArticle, stock });
   if (!areValidTypes) return res.sendStatus(400);
 
   // VALIDATE REPEATED ARTICLE
-  const repeatedArticle = articles.some((article) => article.name === name);
+  const repeatedArticle = articles.some(
+    (article) => article.detail.name === name
+  );
   if (repeatedArticle)
     return res
       .status(400)
       .send({ error: "There is an article with this name" });
 
-  // SUCCESSFUL RESPONSE
+  // UPDATE DB
   const newArticle = {
-    ref: nanoid(),
-    ...receiveArticle,
+    stock,
+    detail: {
+      ref: nanoid(),
+      ...receiveArticle,
+    },
   };
   articles.push(newArticle);
-  const priceAfterTaxes = calculatePriceAfterTaxes(priceNoTaxes, taxPercentage);
 
-  return res.send({
-    ...newArticle,
-    priceAfterTaxes: normalizeNumber(priceAfterTaxes),
-  });
+  // SUCCESSFUL RESPONSE
+  const priceAfterTaxes = calculatePriceAfterTaxes(priceNoTaxes, taxPercentage);
+  newArticle.detail.priceAfterTaxes = priceAfterTaxes;
+  return res.send(newArticle);
 });
 
 server.patch("/articles", (req, res) => {
@@ -65,30 +68,33 @@ server.patch("/articles", (req, res) => {
     description,
     priceNoTaxes,
     taxPercentage,
-    stock,
   };
 
   // VALIDATE TYPES
-  const areValidTypes = validateArticleTypes(receiveArticle);
+  const areValidTypes = validateArticleTypes({ ...receiveArticle, stock });
   if (!areValidTypes || !ref) return res.sendStatus(400);
 
   // VALIDATE ARTICLE EXISTENCE
-  const indexToModify = articles.findIndex((article) => article.ref === ref);
+  const indexToModify = articles.findIndex(
+    (article) => article.detail.ref === ref
+  );
   if (indexToModify < 0) return res.sendStatus(404);
 
-  // SUCCESSFUL RESPONSE
+  // UPDATE DB
   const modifiedArticle = {
-    ref,
-    ...receiveArticle,
+    stock,
+    detail: {
+      ref,
+      ...receiveArticle,
+      stock,
+    },
   };
-
   articles[indexToModify] = modifiedArticle;
-  const priceAfterTaxes = calculatePriceAfterTaxes(priceNoTaxes, taxPercentage);
 
-  return res.send({
-    ...modifiedArticle,
-    priceAfterTaxes: normalizeNumber(priceAfterTaxes),
-  });
+  // SUCCESSFUL RESPONSE
+  const priceAfterTaxes = calculatePriceAfterTaxes(priceNoTaxes, taxPercentage);
+  modifiedArticle.detail.priceAfterTaxes = priceAfterTaxes;
+  return res.send(modifiedArticle);
 });
 
 server.delete("/articles/:ref", (req, res) => {
@@ -113,6 +119,7 @@ server.post("/orders", (req, res) => {
   if (!Array.isArray(articlesRequest)) return res.sendStatus(400);
 
   for (const article of articlesRequest) {
+    if (typeof article.detail !== "object") return res.sendStatus(400);
     const { name, description, priceNoTaxes, taxPercentage, ref } =
       article.detail;
     if (typeof ref !== "string") return res.sendStatus(400);
@@ -135,7 +142,9 @@ server.post("/orders", (req, res) => {
   for (const article of articlesRequest) {
     const { ref, name } = article.detail;
     const { quantity } = article;
-    const articleIndex = articles.findIndex((article) => article.ref === ref);
+    const articleIndex = articles.findIndex(
+      (article) => article.detail.ref === ref
+    );
 
     if (articleIndex < 0) return res.sendStatus(404);
     if (quantity > articles[articleIndex].stock)
@@ -146,7 +155,9 @@ server.post("/orders", (req, res) => {
   for (const article of articlesRequest) {
     const { ref } = article.detail;
     const { quantity } = article;
-    const articleIndex = articles.findIndex((article) => article.ref === ref);
+    const articleIndex = articles.findIndex(
+      (article) => article.detail.ref === ref
+    );
 
     articles[articleIndex].stock -= quantity;
   }
