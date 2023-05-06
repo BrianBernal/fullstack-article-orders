@@ -65,7 +65,23 @@ function insertNewArticle(article) {
     },
   };
   articles.push(newArticle);
+  return newArticle;
+}
+
+function updateArticle(article) {
+  const { ref } = article.detail;
+  if (!ref) throw Error("Missing ref article");
+
+  const articleValidation = validateArticle(article);
+  if (!articleValidation.ok) throw Error(articleValidation.msg);
+
+  const indexToModify = articles.findIndex(
+    (article) => article.detail.ref === ref
+  );
+  if (indexToModify < 0) throw Error("Article not found");
+
+  articles[indexToModify] = article;
 }
 
 export { validateArticle, isRepeatedNameArticle }; // VALIDATORS
-export { getArticles, insertNewArticle }; // ACTIONS
+export { getArticles, insertNewArticle, updateArticle }; // ACTIONS

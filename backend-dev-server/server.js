@@ -8,6 +8,7 @@ import {
   getArticles,
   insertNewArticle,
   isRepeatedNameArticle,
+  updateArticle,
   validateArticle,
 } from "./businessEntities/Article.js";
 
@@ -46,8 +47,9 @@ server.post("/articles", (req, res) => {
       .send({ error: "There is an article with this name" });
 
   // UPDATE DB
+  let insertedArticle;
   try {
-    insertNewArticle(newArticle);
+    insertedArticle = insertNewArticle(newArticle);
   } catch (error) {
     return res.status(400).send(error);
   }
@@ -55,39 +57,34 @@ server.post("/articles", (req, res) => {
   // SUCCESSFUL RESPONSE
   const priceAfterTaxes = calculatePriceAfterTaxes(priceNoTaxes, taxPercentage);
   newArticle.detail.priceAfterTaxes = priceAfterTaxes;
+  newArticle.detail.ref = insertedArticle.detail.ref;
   return res.send(newArticle);
 });
 
 server.patch("/articles", (req, res) => {
-  const { name, description, priceNoTaxes, taxPercentage, stock, ref } =
+  const { ref, name, description, priceNoTaxes, taxPercentage, stock } =
     req.body;
-  const receiveArticle = {
-    name,
-    description,
-    priceNoTaxes,
-    taxPercentage,
-  };
-
-  // VALIDATE TYPES
-  const areValidTypes = validateArticleTypes({ ...receiveArticle, stock });
-  if (!areValidTypes || !ref) return res.sendStatus(400);
-
-  // VALIDATE ARTICLE EXISTENCE
-  const indexToModify = articles.findIndex(
-    (article) => article.detail.ref === ref
-  );
-  if (indexToModify < 0) return res.sendStatus(404);
-
-  // UPDATE DB
   const modifiedArticle = {
     stock,
     detail: {
       ref,
-      ...receiveArticle,
-      stock,
+      name,
+      description,
+      priceNoTaxes,
+      taxPercentage,
     },
   };
-  articles[indexToModify] = modifiedArticle;
+
+  // VALIDATE TYPES
+  const areValidTypes = validateArticle(modifiedArticle);
+  if (!areValidTypes.ok) return res.sendStatus(400);
+
+  // UPDATE DB
+  try {
+    updateArticle(modifiedArticle);
+  } catch (error) {
+    return res.status(400).send(error.message || "Database not updated");
+  }
 
   // SUCCESSFUL RESPONSE
   const priceAfterTaxes = calculatePriceAfterTaxes(priceNoTaxes, taxPercentage);
