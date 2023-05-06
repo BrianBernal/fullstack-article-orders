@@ -1,14 +1,15 @@
 // libraries
 import jsonServer from "json-server";
-import { nanoid } from "nanoid";
 
 // utils
 import data from "./db.json" assert { type: "json" };
+import { calculatePriceAfterTaxes, validateArticleTypes } from "./utils.js";
 import {
-  calculatePriceAfterTaxes,
-  normalizeNumber,
-  validateArticleTypes,
-} from "./utils.js";
+  getArticles,
+  insertNewArticle,
+  isRepeatedNameArticle,
+  validateArticle,
+} from "./businessEntities/Article.js";
 
 const server = jsonServer.create();
 const router = jsonServer.router("db.json");
@@ -19,40 +20,37 @@ server.use(middlewares);
 server.use(jsonServer.bodyParser);
 
 server.get("/articles", (_req, res) => {
-  return res.json(articles);
+  return res.json(getArticles());
 });
 
 server.post("/articles", (req, res) => {
   const { name, description, priceNoTaxes, taxPercentage, stock } = req.body;
-  const receiveArticle = {
-    name,
-    description,
-    priceNoTaxes,
-    taxPercentage,
+  const newArticle = {
+    stock,
+    detail: {
+      name,
+      description,
+      priceNoTaxes,
+      taxPercentage,
+    },
   };
 
   // VALIDATE TYPES
-  const areValidTypes = validateArticleTypes({ ...receiveArticle, stock });
-  if (!areValidTypes) return res.sendStatus(400);
+  const areValidTypes = validateArticle(newArticle);
+  if (!areValidTypes.ok) return res.sendStatus(400);
 
   // VALIDATE REPEATED ARTICLE
-  const repeatedArticle = articles.some(
-    (article) => article.detail.name === name
-  );
-  if (repeatedArticle)
+  if (isRepeatedNameArticle(name))
     return res
       .status(400)
       .send({ error: "There is an article with this name" });
 
   // UPDATE DB
-  const newArticle = {
-    stock,
-    detail: {
-      ref: nanoid(),
-      ...receiveArticle,
-    },
-  };
-  articles.push(newArticle);
+  try {
+    insertNewArticle(newArticle);
+  } catch (error) {
+    return res.status(400).send(error);
+  }
 
   // SUCCESSFUL RESPONSE
   const priceAfterTaxes = calculatePriceAfterTaxes(priceNoTaxes, taxPercentage);
@@ -113,62 +111,22 @@ server.get("/orders", (_req, res) => {
 });
 
 server.post("/orders", (req, res) => {
-  const { articles: articlesRequest } = req.body;
-
-  // VALIDATE ORDER TYPES
-  if (!Array.isArray(articlesRequest)) return res.sendStatus(400);
-
-  for (const article of articlesRequest) {
-    if (typeof article.detail !== "object") return res.sendStatus(400);
-    const { name, description, priceNoTaxes, taxPercentage, ref } =
-      article.detail;
-    if (typeof ref !== "string") return res.sendStatus(400);
-
-    const { quantity } = article;
-    const receiveArticle = {
-      name,
-      description,
-      priceNoTaxes,
-      taxPercentage,
-    };
-    const isValidArticle = validateArticleTypes({
-      ...receiveArticle,
-      stock: quantity,
-    });
-    if (!isValidArticle) return res.sendStatus(400);
-  }
-
-  // VALIDATE STOCK
-  for (const article of articlesRequest) {
-    const { ref, name } = article.detail;
-    const { quantity } = article;
-    const articleIndex = articles.findIndex(
-      (article) => article.detail.ref === ref
-    );
-
-    if (articleIndex < 0) return res.sendStatus(404);
-    if (quantity > articles[articleIndex].stock)
-      return res.status(417).send({ error: `Insufficient stock of ${name}` });
-  }
-
+  // const { articleRefs } = req.body;
+  // // VALIDATE ORDER TYPES
+  // if (!Array.isArray(articleRefs)) return res.sendStatus(400);
+  // for (const artRef of articleRefs) {
+  //   const { ref, quantity } = artRef;
+  //   if (typeof ref !== "string" || typeof quantity !== "number")
+  //     return res.sendStatus(400);
+  // }
+  // // VALIDATE STOCK
+  // for (const artRef of articleRefs) {
+  //   const { ref, quantity } = artRef;
+  //   if (typeof ref !== "string" || typeof quantity !== "number")
+  //     return res.sendStatus(400);
+  // }
   // UPDATE STOCK
-  for (const article of articlesRequest) {
-    const { ref } = article.detail;
-    const { quantity } = article;
-    const articleIndex = articles.findIndex(
-      (article) => article.detail.ref === ref
-    );
-
-    articles[articleIndex].stock -= quantity;
-  }
-
   // SUCCESSFUL RESPONSE
-  const newOrder = {
-    id: nanoid(),
-    articlesRequest,
-  };
-  orders.push(newOrder);
-  return res.send(newOrder);
 });
 
 server.use(router);

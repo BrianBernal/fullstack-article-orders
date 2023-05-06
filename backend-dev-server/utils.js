@@ -43,7 +43,8 @@ function calculatePriceAfterTaxes(priceNoTaxes, taxPercentage) {
   if (typeof priceNoTaxes !== "number" || typeof taxPercentage !== "number")
     throw Error("Incorrect number type");
 
-  return priceNoTaxes * (1 + taxPercentage / 100);
+  const priceAfterTaxes = priceNoTaxes * (1 + taxPercentage / 100);
+  return normalizeNumber(priceAfterTaxes);
 }
 
 export {
