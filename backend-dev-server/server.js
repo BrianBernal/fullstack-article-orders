@@ -3,8 +3,9 @@ import jsonServer from "json-server";
 
 // utils
 import data from "./db.json" assert { type: "json" };
-import { calculatePriceAfterTaxes, validateArticleTypes } from "./utils.js";
+import { calculatePriceAfterTaxes } from "./utils.js";
 import {
+  deleteArticle,
   getArticles,
   insertNewArticle,
   isRepeatedNameArticle,
@@ -15,7 +16,8 @@ import {
 const server = jsonServer.create();
 const router = jsonServer.router("db.json");
 const middlewares = jsonServer.defaults();
-const { articles, orders } = data;
+const { orders } = data;
+const defaultDBError = "Database not updated";
 
 server.use(middlewares);
 server.use(jsonServer.bodyParser);
@@ -83,7 +85,7 @@ server.patch("/articles", (req, res) => {
   try {
     updateArticle(modifiedArticle);
   } catch (error) {
-    return res.status(400).send(error.message || "Database not updated");
+    return res.status(400).send(error.message || defaultDBError);
   }
 
   // SUCCESSFUL RESPONSE
@@ -96,10 +98,11 @@ server.delete("/articles/:ref", (req, res) => {
   const { ref } = req.params;
   if (!ref) return res.sendStatus(400);
 
-  const articleIndex = articles.findIndex((article) => article.ref === ref);
-  if (articleIndex < 0) return res.sendStatus(404);
-
-  articles.splice(articleIndex, 1);
+  try {
+    deleteArticle(ref);
+  } catch (error) {
+    return res.status(400).send(error.message || defaultDBError);
+  }
   return res.send({ ok: true, message: "Article deleted successfully." });
 });
 

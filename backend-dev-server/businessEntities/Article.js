@@ -1,6 +1,7 @@
 import { nanoid } from "nanoid";
 import data from "../db.json" assert { type: "json" };
 import { validateTypes } from "../utils.js";
+
 const { articles } = data;
 
 // VALIDATORS
@@ -83,5 +84,13 @@ function updateArticle(article) {
   articles[indexToModify] = article;
 }
 
+function deleteArticle(ref = "") {
+  const articleIndex = articles.findIndex(
+    (article) => article.detail.ref === ref
+  );
+  if (articleIndex < 0) throw Error("Article not found.");
+  articles.splice(articleIndex, 1);
+}
+
 export { validateArticle, isRepeatedNameArticle }; // VALIDATORS
-export { getArticles, insertNewArticle, updateArticle }; // ACTIONS
+export { getArticles, insertNewArticle, updateArticle, deleteArticle }; // ACTIONS
