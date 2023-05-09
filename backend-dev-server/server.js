@@ -130,10 +130,10 @@ server.patch("/orders", (req, res) => {
   const newOrder = req.body;
   if (!newOrder) return res.status(400).send("missing order.");
   try {
-    const newOrder = updateOrder(newOrder);
-    return res.status(202).send(newOrder);
+    const updatedOrder = updateOrder(newOrder);
+    return res.status(202).send(updatedOrder);
   } catch {
-    return res.sendStatus(201);
+    return res.sendStatus(500);
   }
 });
 

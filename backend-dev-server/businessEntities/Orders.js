@@ -177,11 +177,9 @@ function updateOrder(newOrder) {
     restoredArticle.stock += prevOrderArticle.quantity;
     return restoredArticle;
   });
-  console.log(newRestoredArticles);
   const completedUpdatedArticlesStock =
     updatedArticlesStock.concat(newRestoredArticles);
 
-  console.log("FOR EACH", completedUpdatedArticlesStock);
   // UPDATE STOCK OF THE ARTICLES
   completedUpdatedArticlesStock.forEach((art) => {
     updateArticle(art);
