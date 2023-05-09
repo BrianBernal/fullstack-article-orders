@@ -123,17 +123,18 @@ server.post("/orders", (req, res) => {
   }
 
   // SUCCESSFUL RESPONSE
-  return res.send({ createdOrder: insertedOrder });
+  return res.status(201).send({ createdOrder: insertedOrder });
 });
 
 server.patch("/orders", (req, res) => {
-  const order = req.body;
+  const newOrder = req.body;
+  if (!newOrder) return res.status(400).send("missing order.");
   try {
-    updateOrder(order);
-  } catch (error) {
-    res.status(400).send(error.message);
+    const newOrder = updateOrder(newOrder);
+    return res.status(202).send(newOrder);
+  } catch {
+    return res.sendStatus(201);
   }
-  // return res.status(400).send("crude answer");
 });
 
 server.use(router);

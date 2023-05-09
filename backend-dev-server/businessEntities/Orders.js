@@ -67,6 +67,11 @@ function getOrders() {
   return orders;
 }
 
+function getOrderById(id) {
+  if (typeof id !== "string") throw Error("Invalid order id");
+  return orders.find((order) => order.id === id);
+}
+
 function insertOrder(order) {
   // VALIDATE ORDER TYPES
   let validation = validateOrderTypes(order);
@@ -77,7 +82,7 @@ function insertOrder(order) {
   if (!validation.ok) throw Error(validation.msg);
 
   // INSERT IN DB
-  const newOrder = order.articleRefs.map(({ ref: refOrder, quantity }) => {
+  const orderArticles = order.articleRefs.map(({ ref: refOrder, quantity }) => {
     const currentArticle = getArticleByRef(refOrder);
 
     // UPDATE STOCK
@@ -101,68 +106,101 @@ function insertOrder(order) {
     };
   });
 
-  orders.push({ id: nanoid(), articles: newOrder });
+  const successfulOrder = { id: nanoid(), articles: orderArticles };
+  orders.push(successfulOrder);
 
-  return order;
+  return successfulOrder;
 }
 
 function updateOrder(newOrder) {
   // VALIDATE ORDER TYPES
-  let validation = validateOrderStructureAgainstDB(newOrder);
+  const { id, articleRefs } = newOrder;
+  let validation = validateOrderTypes({ id, articleRefs });
   if (!validation.ok) throw Error(validation.msg);
 
   // GET ORDER FROM DB
-  const { articles: newOrderArticles = [], id } = newOrder;
-  const previousOrderIndex = orders.findIndex((order) => order.id === id);
-  if (previousOrderIndex < 0) {
-    throw Error("Order with the indicated id not found.");
-  }
-  const previousOrder = orders[previousOrderIndex];
+  const prevOrder = getOrderById(id);
+  // console.log(prevOrder);
+  if (!prevOrder) throw Error("Order with specified id not found.");
 
-  const restoredArticlesStock = getArticleListByRefs(
-    previousOrder.articles.map((article) => article.detail.ref)
-  ).map((articleFromDB) => {
-    const prevArticle = previousOrder.articles.find(
-      (art) => art.detail.ref === articleFromDB.detail.ref
+  // VIRTUAL UPDATE STOCKS OF PREVIOUS ARTICLES
+  const allAffectedArticleRefs = new Array(
+    ...new Set(
+      prevOrder.articles
+        .map(({ detail }) => detail.ref)
+        .concat(articleRefs.map((art) => art.ref))
+    )
+  );
+  const restoredPrevArticles = getArticleListByRefs(allAffectedArticleRefs).map(
+    (art) => {
+      const restoredArticle = structuredClone(art);
+      const prevOrderArticle = prevOrder.articles.find(
+        (art) => art.detail.ref === restoredArticle.detail.ref
+      );
+      if (!prevOrderArticle) throw Error("Article not found");
+      restoredArticle.stock += prevOrderArticle.quantity;
+      return restoredArticle;
+    }
+  );
+
+  // CHECK THERE IS ENOUGH STOCK TO SUPPLY A NEW ORDER AND GET NEW STOCKS
+  const updatedArticlesStock = [];
+  for (const newOrderArt of articleRefs) {
+    const orderRefArticle = newOrderArt.ref;
+    const newUpdatedArticle = restoredPrevArticles.find(
+      (art) => art.detail.ref === orderRefArticle
     );
-    const restoredArticle = structuredClone(articleFromDB);
-    restoredArticle.stock += prevArticle.quantity;
+    if (!newUpdatedArticle)
+      throw Error(`Article with ref ${orderRefArticle} not found in the store`);
 
+    const newOrderArticle = articleRefs.find(
+      (art) => art.ref === orderRefArticle
+    );
+
+    newUpdatedArticle.stock -= newOrderArticle.quantity;
+    if (newUpdatedArticle.stock < 0)
+      throw Error(
+        `Stock insufficient to supply ${newUpdatedArticle.detail.name} article`
+      );
+    updatedArticlesStock.push(newUpdatedArticle);
+  }
+
+  const removedArticleRefs = allAffectedArticleRefs.filter(
+    (ref) => !articleRefs.some((art) => art.ref === ref)
+  );
+  const newRestoredArticles = removedArticleRefs.map((ref) => {
+    const art = getArticleByRef(ref);
+    const restoredArticle = structuredClone(art);
+    const prevOrderArticle = prevOrder.articles.find(
+      (art) => art.detail.ref === restoredArticle.detail.ref
+    );
+    restoredArticle.stock += prevOrderArticle.quantity;
     return restoredArticle;
   });
+  console.log(newRestoredArticles);
+  const completedUpdatedArticlesStock =
+    updatedArticlesStock.concat(newRestoredArticles);
 
-  const newArticleStockAvailability = newOrderArticles.map((art) => {
-    const newArticleRef = art.detail.ref;
-    const updatedArticle =
-      restoredArticlesStock.find(
-        ({ detail }) => detail.ref === newArticleRef
-      ) || getArticleByRef(newArticleRef);
-    if (!updatedArticle) throw "Bad request in the article of the order";
-
-    return updatedArticle;
+  console.log("FOR EACH", completedUpdatedArticlesStock);
+  // UPDATE STOCK OF THE ARTICLES
+  completedUpdatedArticlesStock.forEach((art) => {
+    updateArticle(art);
   });
 
-  // UPDATE STOCKS OF AFFECTED ARTICLES
-  const updatedArticles = [];
-  for (const newOrderArt of newOrderArticles) {
-    const { quantity, detail: newDetail } = newOrderArt;
-    const articleInStock = newArticleStockAvailability.find(
-      ({ detail }) => detail.ref === newDetail.ref
+  // UPDATE ORDER
+  const updatedOrderArticles = articleRefs.map(({ quantity, ref }) => {
+    const updatedArticle = updatedArticlesStock.find(
+      (art) => art.detail.ref === ref
     );
-    // CHECK THERE IS ENOUGH STOCK TO SUPPLY A NEW ORDER
-    if (articleInStock.stock < quantity)
-      throw Error(`Not enough stock to the new quantity of ${newDetail.name}`);
+    return {
+      quantity,
+      detail: updatedArticle.detail,
+    };
+  });
 
-    // CREATE NEW UPDATED ARTICLE
-    const updatedStockArticle = structuredClone(articleInStock);
-    updatedStockArticle.stock -= quantity;
-    updatedArticles.push(updatedStockArticle);
-  }
+  prevOrder.articles = updatedOrderArticles;
 
-  // UPDATE DATABASE
-  updatedArticles.forEach((art) => updateArticle(art));
-  previousOrder.articles = newOrderArticles;
-  return newOrder;
+  return structuredClone(prevOrder);
 }
 
 export { validateOrderTypes, validateStockOrder }; // VALIDATORS
