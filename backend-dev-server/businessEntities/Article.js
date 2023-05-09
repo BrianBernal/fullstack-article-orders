@@ -61,6 +61,15 @@ function getArticleByRef(ref = "") {
   return articles.find((article) => article.detail.ref === ref);
 }
 
+function getArticleListByRefs(refs = []) {
+  if (!Array.isArray(refs)) throw Error("Refs param must be an Array");
+
+  const filteredArticles = articles.filter((article) =>
+    refs.some((ref) => ref === article.detail.ref)
+  );
+  return filteredArticles;
+}
+
 function insertNewArticle(article) {
   const articleValidation = validateArticle(article);
   if (!articleValidation.ok) throw Error(articleValidation.msg);
@@ -106,6 +115,7 @@ export {
   // ACTIONS
   getArticles,
   getArticleByRef,
+  getArticleListByRefs,
   insertNewArticle,
   updateArticle,
   deleteArticle,

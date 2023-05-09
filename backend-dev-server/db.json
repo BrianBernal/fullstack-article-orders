@@ -1,7 +1,7 @@
 {
   "articles": [
     {
-      "stock": 1,
+      "stock": 3,
       "detail": {
         "ref": "first-art",
         "name": "mouse",
@@ -11,7 +11,7 @@
       }
     },
     {
-      "stock": 2,
+      "stock": 4,
       "detail": {
         "ref": "second-art",
         "name": "mechanical keyboard",
@@ -51,7 +51,7 @@
       "id": "second-order",
       "articles": [
         {
-          "quantity": 3,
+          "quantity": 1,
           "detail": {
             "ref": "first-art",
             "name": "mouse",

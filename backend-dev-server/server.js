@@ -2,7 +2,6 @@
 import jsonServer from "json-server";
 
 // utils
-import data from "./db.json" assert { type: "json" };
 import { calculatePriceAfterTaxes } from "./utils.js";
 
 // Business logic
@@ -15,7 +14,9 @@ import {
   validateArticle,
 } from "./businessEntities/Article.js";
 import {
+  getOrders,
   insertOrder,
+  updateOrder,
   validateOrderTypes,
   validateStockOrder,
 } from "./businessEntities/Orders.js";
@@ -23,7 +24,6 @@ import {
 const server = jsonServer.create();
 const router = jsonServer.router("db.json");
 const middlewares = jsonServer.defaults();
-const { orders } = data;
 const defaultDBError = "Database not updated";
 
 server.use(middlewares);
@@ -101,20 +101,8 @@ server.patch("/articles", (req, res) => {
   return res.send(modifiedArticle);
 });
 
-server.delete("/articles/:ref", (req, res) => {
-  const { ref } = req.params;
-  if (!ref) return res.sendStatus(400);
-
-  try {
-    deleteArticle(ref);
-  } catch (error) {
-    return res.status(400).send(error.message || defaultDBError);
-  }
-  return res.send({ ok: true, message: "Article deleted successfully." });
-});
-
 server.get("/orders", (_req, res) => {
-  return res.json(orders);
+  return res.send(getOrders());
 });
 
 server.post("/orders", (req, res) => {
@@ -136,6 +124,16 @@ server.post("/orders", (req, res) => {
 
   // SUCCESSFUL RESPONSE
   return res.send({ createdOrder: insertedOrder });
+});
+
+server.patch("/orders", (req, res) => {
+  const order = req.body;
+  try {
+    updateOrder(order);
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
+  // return res.status(400).send("crude answer");
 });
 
 server.use(router);
