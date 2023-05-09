@@ -100,7 +100,6 @@ function updateOrder(newOrder) {
 
   // GET ORDER FROM DB
   const prevOrder = getOrderById(id);
-  // console.log(prevOrder);
   if (!prevOrder) throw Error("Order with specified id not found.");
 
   // VIRTUAL UPDATE STOCKS OF PREVIOUS ARTICLES
