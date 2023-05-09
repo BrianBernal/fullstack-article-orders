@@ -6,14 +6,12 @@ import {
   getArticleByRef,
   getArticleListByRefs,
   updateArticle,
-  validateArticle,
 } from "./Article.js";
 
 const { orders } = data;
 
 // VALIDATORS
 function validateOrderTypes({ articleRefs, id = "fake-id" }) {
-  // VALIDATE TYPES
   if (!Array.isArray(articleRefs) || id === undefined) {
     return validationValue(
       false,
@@ -42,24 +40,6 @@ function validateStockOrder({ articleRefs = [] }) {
       );
   }
   return validationValue(true, "Successful stock order validation");
-}
-
-function validateOrderStructureAgainstDB(order) {
-  const { id = "", articles } = order;
-  if (!id || !Array.isArray(articles))
-    return validationValue(false, "Invalid order types");
-
-  for (const article of articles) {
-    if (article.quantity <= 0)
-      return validationValue(false, "Articles must be major to 0");
-    const artValidation = validateArticle({
-      stock: article.quantity,
-      detail: article.detail,
-    });
-    if (!artValidation.ok) return artValidation;
-  }
-
-  return validationValue(true, "Order structure is correct.");
 }
 
 // ACTIONS
