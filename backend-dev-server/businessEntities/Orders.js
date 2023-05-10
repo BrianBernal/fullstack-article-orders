@@ -18,10 +18,18 @@ function validateOrderTypes({ articleRefs, id = "fake-id" }) {
       "articleRefs must be an array and id must be string"
     );
   }
+
+  const detectedRefs = [];
   for (const artRef of articleRefs) {
     const { ref, quantity } = artRef;
     if (typeof ref !== "string" || typeof quantity !== "number" || quantity < 1)
       return validationValue(false, "Invalid articleRefs");
+
+    const repeatedRef = detectedRefs.some((dref) => dref === ref);
+    if (repeatedRef)
+      return validationValue(false, "Repeated articles not allow in an order");
+
+    detectedRefs.push(ref);
   }
   return validationValue(true, "Successful order types validation");
 }
@@ -110,14 +118,22 @@ function updateOrder(newOrder) {
         .concat(articleRefs.map((art) => art.ref))
     )
   );
-  const restoredPrevArticles = getArticleListByRefs(allAffectedArticleRefs).map(
+
+  const restoredArticles = getArticleListByRefs(allAffectedArticleRefs).map(
     (art) => {
       const restoredArticle = structuredClone(art);
-      const prevOrderArticle = prevOrder.articles.find(
-        (art) => art.detail.ref === restoredArticle.detail.ref
-      );
+      const prevOrderArticle =
+        prevOrder.articles.find(
+          (art) => art.detail.ref === restoredArticle.detail.ref
+        ) || getArticleByRef(restoredArticle.detail.ref);
+
       if (!prevOrderArticle) throw Error("Article not found");
-      restoredArticle.stock += prevOrderArticle.quantity;
+
+      const newQuantity =
+        prevOrderArticle.quantity ||
+        articleRefs.find((newArt) => newArt.ref === art.detail.ref).quantity;
+
+      restoredArticle.stock += newQuantity;
       return restoredArticle;
     }
   );
@@ -126,7 +142,7 @@ function updateOrder(newOrder) {
   const updatedArticlesStock = [];
   for (const newOrderArt of articleRefs) {
     const orderRefArticle = newOrderArt.ref;
-    const newUpdatedArticle = restoredPrevArticles.find(
+    const newUpdatedArticle = restoredArticles.find(
       (art) => art.detail.ref === orderRefArticle
     );
     if (!newUpdatedArticle)
@@ -147,6 +163,7 @@ function updateOrder(newOrder) {
   const removedArticleRefs = allAffectedArticleRefs.filter(
     (ref) => !articleRefs.some((art) => art.ref === ref)
   );
+
   const newRestoredArticles = removedArticleRefs.map((ref) => {
     const art = getArticleByRef(ref);
     const restoredArticle = structuredClone(art);
@@ -156,8 +173,32 @@ function updateOrder(newOrder) {
     restoredArticle.stock += prevOrderArticle.quantity;
     return restoredArticle;
   });
-  const completedUpdatedArticlesStock =
-    updatedArticlesStock.concat(newRestoredArticles);
+
+  const addedOrderArticles = articleRefs.filter(
+    (incomingArt) =>
+      !prevOrder.articles.some(
+        (prevArt) => prevArt.detail.ref === incomingArt.ref
+      )
+  );
+  const addedOrderArticlesRefs = addedOrderArticles.map((art) => art.ref);
+
+  const addedUpdatedArticles = restoredArticles
+    .filter((restoredArt) =>
+      addedOrderArticlesRefs.some(
+        (additionalArtRef) => additionalArtRef === restoredArt.detail.ref
+      )
+    )
+    .map((art) => {
+      const updatedArt = structuredClone(art);
+      updatedArt.stock -= articleRefs.find(
+        (orderArt) => orderArt.ref === art.detail.ref
+      ).quantity;
+      return updatedArt;
+    });
+
+  const completedUpdatedArticlesStock = updatedArticlesStock
+    .concat(newRestoredArticles)
+    .concat(addedUpdatedArticles);
 
   // UPDATE STOCK OF THE ARTICLES
   completedUpdatedArticlesStock.forEach((art) => {

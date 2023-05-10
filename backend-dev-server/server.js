@@ -6,7 +6,6 @@ import { calculatePriceAfterTaxes } from "./utils.js";
 
 // Business logic
 import {
-  deleteArticle,
   getArticles,
   insertNewArticle,
   isRepeatedNameArticle,
@@ -133,7 +132,7 @@ server.patch("/orders", (req, res) => {
     const updatedOrder = updateOrder(newOrder);
     return res.status(202).send(updatedOrder);
   } catch {
-    return res.sendStatus(500);
+    return res.sendStatus(400);
   }
 });
 
