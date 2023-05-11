@@ -1,5 +1,7 @@
+import Header from "@/components/header/Header";
+
 function Articles() {
-  return <h1>Articles</h1>;
+  return <Header title="Article List" />;
 }
 
 export default Articles;

@@ -1,5 +1,7 @@
+import Header from "@/components/header/Header";
+
 function Orders() {
-  return <h1>Orders</h1>;
+  return <Header title="List of orders" />;
 }
 
 export default Orders;
