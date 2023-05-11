@@ -5,10 +5,10 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 
 // components
-import Articles from "../pages/articles/Articles";
-import Orders from "../pages/orders/Orders";
 import Layout from "./layout/Layout";
-import Error404 from "../pages/error404/Error404";
+import Articles from "@/pages/articles/Articles";
+import Orders from "@/pages/orders/Orders";
+import Error404 from "@/pages/error404/Error404";
 
 function App() {
   return (
