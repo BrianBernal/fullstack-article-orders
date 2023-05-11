@@ -1,3 +1,6 @@
+# Mock database
+/src/db.json
+
 # Logs
 logs
 *.log
