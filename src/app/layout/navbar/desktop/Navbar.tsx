@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import LanguageSelector from "../../languageSelector/LanguageSelector";
+import LanguageSelector from "./languageSelector/LanguageSelector";
 
 function Navbar() {
   return (
