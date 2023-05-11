@@ -1,35 +1,29 @@
+import SelectList from "@/components/selectList/SelectList";
 import { useState } from "react";
 
+const languages = [
+  {
+    name: "English",
+    value: "english",
+  },
+  {
+    name: "Spanish",
+    value: "spanish",
+  },
+];
+
 function LanguageSelector() {
-  const [isOpen, setIsOpen] = useState(false);
-  const handleLanguage = () => {
-    setIsOpen((prev) => !prev);
-  };
+  const [language, setLanguage] = useState(languages[1]);
+  const buttonClass =
+    "relative w-full cursor-default rounded-lg py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm text-gray-300 hover:bg-gray-700 hover:text-white  font-small";
 
   return (
-    <div className="relative ml-3">
-      <button
-        className="text-sm leading-6 text-white hover:bg-gray-500 p-1 rounded-md"
-        onClick={handleLanguage}
-      >
-        Language <span>&darr;</span>
-      </button>
-      {isOpen && (
-        <ul
-          className="absolute right-0 z-10 mt-2 w-24 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-          role="menu"
-          aria-orientation="vertical"
-          aria-labelledby="user-menu-button"
-        >
-          <button className="hover:bg-gray-100 w-full">
-            <li className="block px-4 py-2 text-sm text-gray-700">English</li>
-          </button>
-          <button className="hover:bg-gray-100 w-full">
-            <li className="block px-4 py-2 text-sm text-gray-700">Spanish</li>
-          </button>
-        </ul>
-      )}
-    </div>
+    <SelectList
+      items={languages}
+      selected={language}
+      setSelected={setLanguage}
+      buttonClass={buttonClass}
+    />
   );
 }
 
