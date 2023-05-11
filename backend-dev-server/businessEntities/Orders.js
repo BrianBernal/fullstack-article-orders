@@ -1,7 +1,10 @@
-// utils
 import { nanoid } from "nanoid";
+
+// utils
 import data from "../db.json" assert { type: "json" };
 import { validationValue } from "../utils.js";
+
+// Business logic
 import {
   getArticleByRef,
   getArticleListByRefs,
@@ -100,9 +103,9 @@ function insertOrder(order) {
   return successfulOrder;
 }
 
-function updateOrder(newOrder) {
+function updateOrder(orderWithId) {
   // VALIDATE ORDER TYPES
-  const { id, articleRefs } = newOrder;
+  const { id, articleRefs } = orderWithId;
   let validation = validateOrderTypes({ id, articleRefs });
   if (!validation.ok) throw Error(validation.msg);
 
