@@ -1,9 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 
 // reducers
+import articleReducer from "@/pages/articles/state/articleSlice";
 
 const store = configureStore({
-  reducer: {},
+  reducer: {
+    articles: articleReducer,
+  },
 });
 
 type TRootState = ReturnType<typeof store.getState>;
