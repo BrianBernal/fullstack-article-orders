@@ -1,12 +1,30 @@
+// libraries
+import { useState } from "react";
+
+// models
+import { TNewArticle } from "@/models/article";
+
+// components
 import Modal from "@/components/modal/Modal";
 import ArticleForm from "../articleForm/ArticleForm";
-import { useState } from "react";
 
 function NewArticle() {
   const [isOpenForm, setIsOpenForm] = useState(false);
+
   const onNewArticleHandler = () => {
     setIsOpenForm(true);
   };
+
+  const saveArticle = (art: TNewArticle) => {
+    console.log(art);
+    // dispatch save y en el dispatcher actualizar la lista de articulos
+    closeModalForm();
+  };
+
+  const closeModalForm = () => {
+    setIsOpenForm(false);
+  };
+
   return (
     <>
       <Modal
@@ -18,6 +36,8 @@ function NewArticle() {
         <ArticleForm
           title=""
           subtitle="Please fill the following fields to create a new Article"
+          onSubmitHandler={saveArticle}
+          onCancelHandler={closeModalForm}
         />
       </Modal>
       <button
