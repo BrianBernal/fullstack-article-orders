@@ -14,8 +14,9 @@ type TUseFetchServiceOptions<T> = {
 
 function useFetchService<T>(
   service: (body: T) => Promise<T>,
-  { payload = null as T, initialData = null }: TUseFetchServiceOptions<T>
+  options: TUseFetchServiceOptions<T> = {}
 ) {
+  const { initialData = null, payload = {} as T } = options;
   const INITIAL_RESPONSE: response<T> = { ok: false, data: initialData };
 
   const [error, setError] = useState(INITIAL_ERROR);
