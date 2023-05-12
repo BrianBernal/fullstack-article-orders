@@ -1,5 +1,5 @@
 // types
-import { TArticle } from "@/models/article";
+import { TNewArticle } from "@/models/article";
 
 // hooks
 import useFetchService from "./useFetchService";
@@ -11,8 +11,8 @@ function useGetArticles() {
   return useFetchService(fetchArticles, { initialData: [] });
 }
 
-function useAddArticle(newArticle: TArticle) {
-  return useFetchService<TArticle>(fetchNewArticle, {
+function useAddArticle(newArticle: TNewArticle) {
+  return useFetchService<TNewArticle>(fetchNewArticle, {
     payload: newArticle,
   });
 }

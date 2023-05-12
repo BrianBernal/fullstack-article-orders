@@ -1,7 +1,7 @@
 // models
+import { TArticle, TNewArticle } from "@/models/article";
 
 // utils
-import { TArticle } from "@/models/article";
 import {
   SERVICE_URL,
   createFetchOptions,
@@ -12,9 +12,9 @@ function fetchArticles() {
   return fetchBackendJson<TArticle[]>(SERVICE_URL.articles);
 }
 
-function fetchNewArticle(body: TArticle) {
+function fetchNewArticle(body: TNewArticle) {
   const fetchOptions = createFetchOptions("POST", body);
-  return fetchBackendJson<TArticle>(SERVICE_URL.articles, fetchOptions);
+  return fetchBackendJson<TNewArticle>(SERVICE_URL.articles, fetchOptions);
 }
 
 export { fetchArticles, fetchNewArticle };

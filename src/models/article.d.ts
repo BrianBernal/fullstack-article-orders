@@ -6,7 +6,16 @@ type TArticle = {
     description: string;
     priceNoTaxes: number;
     taxPercentage: number;
+    stock: number;
   };
 };
 
-export { TArticle };
+type TNewArticle = {
+  name: string;
+  description: string;
+  priceNoTaxes: number;
+  taxPercentage: number;
+  stock: number;
+};
+
+export { TArticle, TNewArticle };
