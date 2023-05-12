@@ -1,20 +1,25 @@
-import { TNewArticle } from "@/models/article";
+// libraries
+import { useState } from "react";
 
-type TArticleForm = {
-  title: string;
-  subtitle?: string;
-  initialData?: TNewArticle;
-  onSave: (art: TNewArticle) => void;
-  onCancel: () => void;
+// types
+import { TArticleForm } from "./types";
+
+const DEFAULT_INITIAL_DATA_FORM = {
+  name: "",
+  description: "",
+  priceNoTaxes: 0,
+  taxPercentage: 0,
+  stock: 0,
 };
-function ArticleForm({ title, subtitle, initialData }: TArticleForm) {
-  //   const {
-  //     name = "",
-  //     description = "",
-  //     priceNoTaxes = 0,
-  //     taxPercentage = 0,
-  //     stock = 0,
-  //   } = initialData;
+
+function ArticleForm({
+  title,
+  subtitle,
+  initialData = DEFAULT_INITIAL_DATA_FORM,
+}: TArticleForm) {
+  const [dataForm, setDataForm] = useState(initialData);
+  const { name, description, priceNoTaxes, taxPercentage, stock } = dataForm;
+
   return (
     <form className="max-w-md">
       <div className="space-y-12">

@@ -1,29 +1,17 @@
 // libraries
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 
-type TModalButton = {
-  buttonText: string;
-  handler?: (p?: unknown) => void;
-};
-
-type TModal = {
-  title: string;
-  isOpen: boolean;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  children: React.ReactElement;
-  ok?: TModalButton;
-  cancel?: TModalButton;
-  hideActions?: boolean;
-};
+// types
+import { TModal } from "./types";
 
 function Modal({
   ok = { buttonText: "Ok" },
-  hideActions = false,
   cancel = { buttonText: "Cancel" },
+  title,
   isOpen,
   setIsOpen,
-  title,
+  hideActions = false,
   children,
 }: TModal) {
   const { buttonText: okButtonText, handler: okHandler } = ok;
