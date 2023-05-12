@@ -1,6 +1,7 @@
 const BACKEND_PORT = import.meta.env.BACKEND_URL || 4000;
+const BACKEND_HOST_URL = import.meta.env.BACKEND_HOST_URL || "http://localhost";
 const BACKEND_HOSTNAME =
-  import.meta.env.BACKEND_URL || `http://localhost:${BACKEND_PORT}`;
+  import.meta.env.BACKEND_URL || `${BACKEND_HOST_URL}:${BACKEND_PORT}`;
 
 const SERVICE_URL = Object.freeze({
   articles: `${BACKEND_HOSTNAME}/articles`,
