@@ -1,12 +1,17 @@
 import Header from "@/components/header/Header";
-import { articles } from "../../../backend-dev-server/db.json";
+import { useGetArticles } from "@/hooks/useServices";
 
 function Articles() {
+  const { response, loading } = useGetArticles();
+  const { data: articles } = response;
+
   return (
     <>
       <Header title="Article List" />
       <ul role="list" className="divide-y divide-gray-300 max-w-lg mx-auto">
-        {articles.map((art) => {
+        {loading && "loading..."}
+        {!response.ok && !loading && <p>Articles not found.</p>}
+        {articles?.map((art) => {
           const { detail, stock } = art;
           const { description, name, priceNoTaxes, ref } = detail;
           return (

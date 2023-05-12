@@ -1,5 +1,6 @@
 // libraries
 import jsonServer from "json-server";
+import { loadEnv } from "vite";
 
 // utils
 import { calculatePriceAfterTaxes } from "./utils.js";
@@ -24,6 +25,8 @@ const server = jsonServer.create();
 const router = jsonServer.router("db.json");
 const middlewares = jsonServer.defaults();
 const defaultDBError = "Database not updated";
+// eslint-disable-next-line no-undef
+const PORT = loadEnv("development", process.cwd())?.VITE_PORT || 4000;
 
 server.use(middlewares);
 server.use(jsonServer.bodyParser);
@@ -137,6 +140,6 @@ server.patch("/orders", (req, res) => {
 });
 
 server.use(router);
-server.listen(3000, () => {
-  console.log("JSON server is running on port 3000");
+server.listen(PORT, () => {
+  console.log(`JSON server is running on port ${PORT}`);
 });
