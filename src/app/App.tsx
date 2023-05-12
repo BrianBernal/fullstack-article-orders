@@ -1,4 +1,8 @@
 // libraries
+import { Provider } from "react-redux";
+
+// redux
+import store from "@/redux/store";
 
 // styles
 import "./App.css";
@@ -7,7 +11,11 @@ import "./App.css";
 import Routes from "@/routing/Routes";
 
 function App() {
-  return <Routes />;
+  return (
+    <Provider store={store}>
+      <Routes />
+    </Provider>
+  );
 }
 
 export default App;

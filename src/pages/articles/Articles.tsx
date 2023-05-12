@@ -1,6 +1,6 @@
 import Header from "@/components/header/Header";
-import ArticleList from "./articleList/ArticleList";
-import NewArticle from "./newArticle/NewArticle";
+import ArticleList from "./components/articleList/ArticleList";
+import NewArticle from "./components/newArticle/NewArticle";
 
 function Articles() {
   return (
