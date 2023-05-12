@@ -4,8 +4,8 @@ type TArticleForm = {
   title: string;
   subtitle?: string;
   initialData?: TNewArticle;
-  onSave: (art: TNewArticle) => void;
-  onCancel: () => void;
+  onSubmitHandler: (art: TNewArticle) => void;
+  onCancelHandler?: () => void;
 };
 
 export type { TArticleForm };
