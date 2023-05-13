@@ -49,7 +49,8 @@ server.post("/articles", (req, res) => {
 
   // VALIDATE TYPES
   const areValidTypes = validateArticle(newArticle);
-  if (!areValidTypes.ok) return res.sendStatus(400);
+  if (!areValidTypes.ok)
+    return res.status(400).send({ error: areValidTypes.msg });
 
   // VALIDATE REPEATED ARTICLE
   if (isRepeatedNameArticle(name))
@@ -62,7 +63,7 @@ server.post("/articles", (req, res) => {
   try {
     insertedArticle = insertNewArticle(newArticle);
   } catch (error) {
-    return res.status(400).send(error);
+    return res.status(400).send({ error: error });
   }
 
   // SUCCESSFUL RESPONSE
@@ -94,7 +95,7 @@ server.patch("/articles", (req, res) => {
   try {
     updateArticle(modifiedArticle);
   } catch (error) {
-    return res.status(400).send(error.message || defaultDBError);
+    return res.status(400).send({ error: error.message || defaultDBError });
   }
 
   // SUCCESSFUL RESPONSE
@@ -121,7 +122,7 @@ server.post("/orders", (req, res) => {
   try {
     insertedOrder = insertOrder(order);
   } catch (error) {
-    return res.status(400).send(error.message || defaultDBError);
+    return res.status(400).send({ error: error.message || defaultDBError });
   }
 
   // SUCCESSFUL RESPONSE
@@ -134,8 +135,8 @@ server.patch("/orders", (req, res) => {
   try {
     const updatedOrder = updateOrder(newOrder);
     return res.status(202).send(updatedOrder);
-  } catch {
-    return res.sendStatus(400);
+  } catch (error) {
+    return res.status(400).send({ error: error.message || defaultDBError });
   }
 });
 

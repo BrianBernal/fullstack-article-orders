@@ -25,13 +25,12 @@ async function fetchBackendJson<T>(
   url: string,
   requestInit?: RequestInit
 ): Promise<T> {
-  try {
-    const fetchResponse = await fetch(url, requestInit);
-    const data = fetchResponse.json();
+  const response = await fetch(url, requestInit);
+  const data = await response.json();
+  if (response.ok) {
     return data;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    throw Error(error);
+  } else {
+    throw Error(data?.error || data || response.statusText);
   }
 }
 

@@ -7,8 +7,11 @@ import { TNewArticle } from "@/models/article";
 // components
 import Modal from "@/components/modal/Modal";
 import ArticleForm from "../articleForm/ArticleForm";
+import { useAppDispatch } from "@/redux/hooks";
+import { fetchNewArticleAction } from "../../state/articleSlice";
 
 function NewArticle() {
+  const dispatch = useAppDispatch();
   const [isOpenForm, setIsOpenForm] = useState(false);
 
   const onNewArticleHandler = () => {
@@ -16,8 +19,7 @@ function NewArticle() {
   };
 
   const saveArticle = (art: TNewArticle) => {
-    console.log(art);
-    // dispatch save y en el dispatcher actualizar la lista de articulos
+    dispatch(fetchNewArticleAction(art));
     closeModalForm();
   };
 

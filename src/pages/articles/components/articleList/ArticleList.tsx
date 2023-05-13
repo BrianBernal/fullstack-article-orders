@@ -25,7 +25,11 @@ function ArticleList() {
   return (
     <ul role="list" className="divide-y divide-gray-300 max-w-lg mx-auto">
       {isLoading && "loading..."}
-      {error && <p>{error}</p>}
+      {error && !isLoading && (
+        <span className="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
+          There is a problem with this operation
+        </span>
+      )}
       {articleList.map((art) => {
         return (
           <ArticleRow

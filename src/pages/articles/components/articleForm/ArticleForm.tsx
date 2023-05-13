@@ -12,7 +12,7 @@ const DEFAULT_INITIAL_DATA_FORM = {
   stock: 0,
 };
 
-type Inputs = typeof DEFAULT_INITIAL_DATA_FORM;
+type TInputs = typeof DEFAULT_INITIAL_DATA_FORM;
 
 function ArticleForm({
   title,
@@ -25,10 +25,20 @@ function ArticleForm({
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<Inputs>({ defaultValues: initialData });
+  } = useForm<TInputs>({ defaultValues: initialData });
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
-    onSubmitHandler(data);
+  const onSubmit: SubmitHandler<TInputs> = (data) => {
+    const { name, description, priceNoTaxes, taxPercentage, stock } = data;
+
+    // this is because submit handler does not normalize according with TInputs
+    const normalizedData = {
+      name,
+      description,
+      priceNoTaxes: Number(priceNoTaxes),
+      taxPercentage: Number(taxPercentage),
+      stock: Number(stock),
+    };
+    onSubmitHandler(normalizedData);
   };
 
   return (

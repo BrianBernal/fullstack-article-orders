@@ -14,7 +14,7 @@ function fetchArticles() {
 
 function fetchNewArticle(body: TNewArticle) {
   const fetchOptions = createFetchOptions("POST", body);
-  return fetchBackendJson<TNewArticle>(SERVICE_URL.articles, fetchOptions);
+  return fetchBackendJson<TArticle>(SERVICE_URL.articles, fetchOptions);
 }
 
 export { fetchArticles, fetchNewArticle };
