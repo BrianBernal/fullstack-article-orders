@@ -21,17 +21,41 @@ function createFetchOptions(method: TMmethod, body = {}, headers = {}) {
   return fetchOptions;
 }
 
-async function fetchBackendJson<T>(
+async function fetchJsonFromBackend<T>(
   url: string,
   requestInit?: RequestInit
 ): Promise<T> {
-  const response = await fetch(url, requestInit);
-  const data = await response.json();
-  if (response.ok) {
-    return data;
-  } else {
-    throw Error(data?.error || data || response.statusText);
+  let response;
+
+  // case: network error
+  try {
+    response = await fetch(url, requestInit);
+  } catch (error) {
+    throw Error("Network error.");
   }
+
+  if (response.ok) {
+    // case: successful with data
+    try {
+      return await response.json();
+    } catch (error) {
+      // case: successful with NO data
+      return undefined as T;
+    }
+  }
+
+  // case: error code with data response
+  let responseErrorData;
+  try {
+    responseErrorData = await response.json();
+  } catch (error) {
+    responseErrorData = false;
+  }
+
+  if (typeof responseErrorData === "string") throw Error(responseErrorData);
+
+  // case: error code without data
+  throw Error(responseErrorData?.error || "Resource not found.");
 }
 
-export { SERVICE_URL, createFetchOptions, fetchBackendJson };
+export { SERVICE_URL, createFetchOptions, fetchJsonFromBackend };

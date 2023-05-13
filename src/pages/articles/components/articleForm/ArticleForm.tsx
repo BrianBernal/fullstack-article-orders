@@ -2,22 +2,12 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 
 // types
-import { TArticleForm } from "./types";
-
-const DEFAULT_INITIAL_DATA_FORM = {
-  name: "",
-  description: "",
-  priceNoTaxes: 0,
-  taxPercentage: 0,
-  stock: 0,
-};
-
-type TInputs = typeof DEFAULT_INITIAL_DATA_FORM;
+import { TArticleForm, TInputs } from "./types";
 
 function ArticleForm({
   title,
   subtitle,
-  initialData = DEFAULT_INITIAL_DATA_FORM,
+  initialData,
   onSubmitHandler,
   onCancelHandler,
 }: TArticleForm) {
@@ -25,6 +15,7 @@ function ArticleForm({
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<TInputs>({ defaultValues: initialData });
 
   const onSubmit: SubmitHandler<TInputs> = (data) => {
@@ -39,6 +30,7 @@ function ArticleForm({
       stock: Number(stock),
     };
     onSubmitHandler(normalizedData);
+    reset();
   };
 
   return (

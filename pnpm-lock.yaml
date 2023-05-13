@@ -25,6 +25,7 @@ specifiers:
   react-hook-form: ^7.43.9
   react-redux: ^8.0.5
   react-router-dom: ^6.11.1
+  react-toastify: ^9.1.2
   tailwindcss: ^3.3.2
   typescript: ^5.0.4
   vite: ^4.3.2
@@ -38,6 +39,7 @@ dependencies:
   react-hook-form: 7.43.9_react@18.2.0
   react-redux: 8.0.5_kuusov2leqnirz6kvocub7ct4e
   react-router-dom: 6.11.1_biqbaboplfbrettd7655fr4n2y
+  react-toastify: 9.1.2_biqbaboplfbrettd7655fr4n2y
 
 devDependencies:
   '@tailwindcss/forms': 0.5.3_tailwindcss@3.3.2
@@ -1161,6 +1163,11 @@ packages:
       strip-ansi: 6.0.1
       wrap-ansi: 7.0.0
     dev: true
+
+  /clsx/1.2.1:
+    resolution: {integrity: sha512-EcR6r5a8bj6pu3ycsa/E/cKVGuTgZJZdsyUYHOksG/UHIiKfjxzRxYJpyVBwYaQeOvghal9fcc4PidlgzugAQg==}
+    engines: {node: '>=6'}
+    dev: false
 
   /color-convert/1.9.3:
     resolution: {integrity: sha512-QfAUtd+vFdAtFQcC8CCyYt1fYWxSqAiK2cSD6zDB8N3cpsEBAvRxp9zOGg6G/SHHJYAT88/az/IuDGALsNVbGg==}
@@ -3182,6 +3189,17 @@ packages:
     dependencies:
       '@remix-run/router': 1.6.1
       react: 18.2.0
+    dev: false
+
+  /react-toastify/9.1.2_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-PBfzXO5jMGEtdYR5jxrORlNZZe/EuOkwvwKijMatsZZm8IZwLj01YvobeJYNjFcA6uy6CVrx2fzL9GWbhWPTDA==}
+    peerDependencies:
+      react: '>=16'
+      react-dom: '>=16'
+    dependencies:
+      clsx: 1.2.1
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
     dev: false
 
   /react/18.2.0:

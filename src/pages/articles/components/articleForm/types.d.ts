@@ -8,4 +8,12 @@ type TArticleForm = {
   onCancelHandler?: () => void;
 };
 
-export type { TArticleForm };
+type TInputs = {
+  name: string;
+  description: string;
+  priceNoTaxes: number;
+  taxPercentage: number;
+  stock: number;
+};
+
+export type { TArticleForm, TInputs };

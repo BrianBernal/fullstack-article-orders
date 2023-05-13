@@ -20,7 +20,6 @@ function NewArticle() {
 
   const saveArticle = (art: TNewArticle) => {
     dispatch(fetchNewArticleAction(art));
-    closeModalForm();
   };
 
   const closeModalForm = () => {
