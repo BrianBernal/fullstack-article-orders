@@ -1,52 +1,25 @@
 // libraries
-import { Fragment, useEffect } from "react";
+import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 
 // types
 import { TModal } from "./types";
 
 function Modal({
-  ok = { buttonText: "Ok" },
-  cancel = { buttonText: "Cancel" },
+  ok,
+  cancel,
   title,
   isOpen,
-  setIsOpen,
   hideActions = false,
   children,
 }: TModal) {
-  const { buttonText: okButtonText, handler: okHandler } = ok;
+  // const { buttonText: okButtonText, handler: okHandler } = ok;
   const { buttonText: cancelButtonText, handler: cancelHandler } = cancel;
-
-  const closeModal = () => {
-    setIsOpen(false);
-  };
-
-  const openModal = () => {
-    setIsOpen(true);
-  };
-
-  const onOk = () => {
-    if (okHandler) okHandler();
-    closeModal();
-  };
-
-  const onCancel = () => {
-    if (cancelHandler) cancelHandler();
-    closeModal();
-  };
-
-  useEffect(() => {
-    if (isOpen) {
-      openModal();
-    } else {
-      closeModal();
-    }
-  }, [isOpen]);
 
   return (
     <>
       <Transition appear show={isOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={closeModal}>
+        <Dialog as="div" className="relative z-10" onClose={cancelHandler}>
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -85,17 +58,17 @@ function Modal({
                     <div className="mt-6 flex items-center justify-end gap-x-6">
                       <button
                         className="text-sm font-semibold leading-6 text-gray-900"
-                        onClick={onCancel}
+                        onClick={cancelHandler}
                         type="button"
                       >
                         {cancelButtonText}
                       </button>
                       <button
                         className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                        onClick={onOk}
+                        onClick={ok?.handler}
                         type="button"
                       >
-                        {okButtonText}
+                        {ok?.buttonText}
                       </button>
                     </div>
                   )}

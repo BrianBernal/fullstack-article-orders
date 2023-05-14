@@ -1,16 +1,16 @@
 type TModalButton = {
-  buttonText: string;
-  handler?: (p?: unknown) => void;
+  buttonText?: string;
+  handler: (p?: unknown) => void;
 };
 
 type TModal = {
   title: string;
   isOpen: boolean;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  children: React.ReactElement;
   ok?: TModalButton;
-  cancel?: TModalButton;
+  cancel: TModalButton;
   hideActions?: boolean;
+  children: React.ReactElement;
+  // setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export type { TModal };

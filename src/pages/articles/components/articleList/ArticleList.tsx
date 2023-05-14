@@ -2,7 +2,10 @@ import ArticleRow from "./articleRow/ArticleRow";
 import { TArticle } from "@/models/article";
 import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { fetchArticlesAction } from "../../state/articleSlice";
+import {
+  fetchArticlesAction,
+  setSelectedArticle,
+} from "../../state/articleSlice";
 import { requestStatus } from "@/redux/utils";
 
 function ArticleList() {
@@ -17,7 +20,7 @@ function ArticleList() {
   }, []);
 
   const editArticle = (art: TArticle) => {
-    console.log(art);
+    dispatch(setSelectedArticle(art.detail.ref));
   };
 
   return (

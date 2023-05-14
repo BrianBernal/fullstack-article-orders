@@ -31,7 +31,9 @@ function NewArticle() {
       <Modal
         title="New Article"
         isOpen={isOpenForm}
-        setIsOpen={setIsOpenForm}
+        cancel={{
+          handler: closeModalForm,
+        }}
         hideActions
       >
         <ArticleForm

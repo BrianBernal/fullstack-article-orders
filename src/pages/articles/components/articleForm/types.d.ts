@@ -3,7 +3,7 @@ import { TNewArticle } from "@/models/article";
 type TArticleForm = {
   title: string;
   subtitle?: string;
-  initialData?: TNewArticle;
+  initialData?: TNewArticle | undefined;
   onSubmitHandler: (art: TNewArticle) => void;
   onCancelHandler?: () => void;
 };

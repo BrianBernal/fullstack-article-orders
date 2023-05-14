@@ -1,5 +1,5 @@
 // models
-import { TArticle, TNewArticle } from "@/models/article";
+import { TArticle, TEditedArticle, TNewArticle } from "@/models/article";
 
 // utils
 import {
@@ -17,4 +17,9 @@ function fetchNewArticle(body: TNewArticle) {
   return fetchJsonFromBackend<TArticle>(SERVICE_URL.articles, fetchOptions);
 }
 
-export { fetchArticles, fetchNewArticle };
+function fetchEditArticle(body: TEditedArticle) {
+  const fetchOptions = createFetchOptions("PATCH", body);
+  return fetchJsonFromBackend<TArticle>(SERVICE_URL.articles, fetchOptions);
+}
+
+export { fetchArticles, fetchNewArticle, fetchEditArticle };
