@@ -6,6 +6,7 @@ type TArticleForm = {
   initialData?: TNewArticle | undefined;
   onSubmitHandler: (art: TNewArticle) => void;
   onCancelHandler?: () => void;
+  priceAfterTaxes?: number;
 };
 
 type TInputs = {

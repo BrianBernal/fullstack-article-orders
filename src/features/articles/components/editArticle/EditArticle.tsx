@@ -26,7 +26,14 @@ function EditArticle() {
   const detail = selectedArticle?.detail;
   const stock = selectedArticle?.stock;
 
-  const { name, description, priceNoTaxes, ref, taxPercentage } = detail;
+  const {
+    name,
+    description,
+    priceNoTaxes,
+    ref,
+    taxPercentage,
+    priceAfterTaxes,
+  } = detail;
 
   const initialForm = {
     name,
@@ -75,6 +82,7 @@ function EditArticle() {
           onSubmitHandler={saveArticle}
           onCancelHandler={closeModalForm}
           initialData={initialForm}
+          priceAfterTaxes={priceAfterTaxes}
         />
       </Modal>
     </>

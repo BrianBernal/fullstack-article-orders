@@ -49,7 +49,7 @@ async function fetchJsonFromBackend<T>(
   try {
     responseErrorData = await response.json();
   } catch (error) {
-    responseErrorData = false;
+    responseErrorData = null;
   }
 
   if (typeof responseErrorData === "string") throw Error(responseErrorData);

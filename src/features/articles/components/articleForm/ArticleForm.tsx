@@ -3,6 +3,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 
 // types
 import { TArticleForm, TInputs } from "./types";
+import { calculatePriceAfterTaxes } from "@/utils/mathOperations";
 
 function ArticleForm({
   title,
@@ -10,13 +11,20 @@ function ArticleForm({
   initialData,
   onSubmitHandler,
   onCancelHandler,
+  priceAfterTaxes,
 }: TArticleForm) {
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
+    watch,
   } = useForm<TInputs>({ defaultValues: initialData });
+
+  const priceNoTaxes = Number(watch("priceNoTaxes")) || 0;
+  const taxPercentage = Number(watch("taxPercentage")) || 0;
+  const totalPrice =
+    priceAfterTaxes || calculatePriceAfterTaxes(priceNoTaxes, taxPercentage);
 
   const onSubmit: SubmitHandler<TInputs> = (data) => {
     const { name, description, priceNoTaxes, taxPercentage, stock } = data;
@@ -168,6 +176,11 @@ function ArticleForm({
               </div>
             </div>
           </div>
+        </div>
+        <div className="col-span-full">
+          <span className="block text-sm font-medium leading-6 text-gray-900">
+            Total price:<b> $ {totalPrice}</b>
+          </span>
         </div>
       </div>
 

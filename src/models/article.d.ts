@@ -6,6 +6,7 @@ type TArticle = {
     description: string;
     priceNoTaxes: number;
     taxPercentage: number;
+    priceAfterTaxes: number;
   };
 };
 
