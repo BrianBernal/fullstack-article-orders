@@ -2,9 +2,9 @@
 import { BrowserRouter, Route, Routes as ReactRouter } from "react-router-dom";
 
 // components
-import Articles from "@/pages/articles/Articles";
-import Orders from "@/pages/orders/Orders";
-import Error404 from "@/pages/error404/Error404";
+import Articles from "@/features/articles/Articles";
+import Orders from "@/features/orders/Orders";
+import Error404 from "@/features/error404/Error404";
 import Layout from "@/app/layout/Layout";
 
 function Routes() {
