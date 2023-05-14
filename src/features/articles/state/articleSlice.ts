@@ -1,11 +1,14 @@
-import { TArticle, TEditedArticle, TNewArticle } from "@/models/article";
-import { requestStatus } from "@/redux/utils";
-import {
-  fetchArticles,
-  fetchEditArticle,
-  fetchNewArticle,
-} from "@/services/services";
+// libraries
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+
+// models
+import { TArticle, TEditedArticle, TNewArticle } from "@/models/article";
+
+// utils
+import { requestStatus } from "@/redux/utils";
+import { articleService } from "@/services/services";
+
+const { fetchArticles, fetchNewArticle, fetchEditArticle } = articleService;
 
 const INITIAL_ARTICLES_STATE = {
   list: [] as TArticle[],

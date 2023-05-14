@@ -1,13 +1,15 @@
+type TDetail = {
+  ref: string;
+  name: string;
+  description: string;
+  priceNoTaxes: number;
+  taxPercentage: number;
+  priceAfterTaxes: number;
+};
+
 type TArticle = {
   stock: number;
-  detail: {
-    ref: string;
-    name: string;
-    description: string;
-    priceNoTaxes: number;
-    taxPercentage: number;
-    priceAfterTaxes: number;
-  };
+  detail: TDetail;
 };
 
 type TNewArticle = {
