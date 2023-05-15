@@ -2,30 +2,23 @@
 import { useEffect, useState } from "react";
 
 // models
-import { TArticle } from "@/models/article";
-import { TArticleRefs, TOrder } from "@/models/order";
+import { TOrderArticle, TOrderForm } from "./types";
 
 // redux
 import { fetchArticlesAction } from "@/features/articles/state/articleSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 
+// utils
+import notify from "@/utils/notify";
+import { requestStatus } from "@/redux/utils";
+
 // components
 import SelectList from "@/components/selectList/SelectList";
 import OrderArticleItem from "./orderArticleItem/OrderArticleItem";
-import notify from "@/utils/notify";
 
-type TOrderArticle = {
-  article: TArticle;
-  quantity: number;
-};
-
-type TOrderForm = {
-  title: string;
-  subtitle?: string;
-  orderData?: TOrder;
-  onSubmitHandler: (art: TArticleRefs[], orderId?: string) => void;
-  onCancelHandler?: () => void;
-  priceAfterTaxes?: number;
+const INITIAL_SELECT_VALUE = {
+  name: "Select option...",
+  value: "",
 };
 
 function OrderForm({
@@ -35,14 +28,25 @@ function OrderForm({
   onSubmitHandler,
   onCancelHandler,
 }: TOrderForm) {
-  const articles = useAppSelector((state) => state.articles.list);
   const dispatch = useAppDispatch();
+  const { list: articles, status: articleStatus } = useAppSelector(
+    (state) => state.articles
+  );
 
   const getSelectorValues = () => {
-    return articles.map(({ detail }) => ({
-      name: detail.name,
-      value: detail.ref,
-    }));
+    const orderArticleRefs =
+      orderData?.articles.map((art) => art.detail.ref) || [];
+
+    const filteredSelectorValues = articles
+      .filter((art) => {
+        return !orderArticleRefs.includes(art.detail.ref);
+      })
+      .map(({ detail }) => ({
+        name: detail.name,
+        value: detail.ref,
+      }));
+
+    return filteredSelectorValues;
   };
 
   const getInitialOrderArticleList = (): TOrderArticle[] => {
@@ -62,7 +66,7 @@ function OrderForm({
   };
 
   const [selectorValues, setSelectorValues] = useState(getSelectorValues());
-  const [selectedArticle, setSelectedArticle] = useState(selectorValues[0]);
+  const [selectedArticle, setSelectedArticle] = useState(INITIAL_SELECT_VALUE);
   const [orderArticleList, setOrderArticleList] = useState<TOrderArticle[]>(
     getInitialOrderArticleList()
   );
@@ -77,16 +81,16 @@ function OrderForm({
   );
 
   useEffect(() => {
-    if (!selectedArticle) {
+    if (articleStatus === requestStatus.idle) {
       dispatch(fetchArticlesAction());
     }
-  }, [selectedArticle]);
+  }, [articleStatus]);
 
   useEffect(() => {
-    if (!selectedArticle && articles.length > 0) {
+    if (articles.length > 0) {
       const initialSelectorValues = getSelectorValues();
       setSelectorValues(initialSelectorValues);
-      setSelectedArticle(initialSelectorValues[0]);
+      setSelectedArticle(INITIAL_SELECT_VALUE);
     }
   }, [articles.length]);
 

@@ -22,6 +22,7 @@ function NewOrder() {
 
   const saveOrder = (articleRefs: TArticleRefs[]) => {
     dispatch(fetchNewOrderAction({ articleRefs }));
+    closeModalForm();
   };
 
   const closeModalForm = () => {
@@ -31,7 +32,7 @@ function NewOrder() {
   return (
     <>
       <Modal
-        title="New Article"
+        title="New Order"
         isOpen={isOpenForm}
         cancel={{
           handler: closeModalForm,
@@ -39,7 +40,6 @@ function NewOrder() {
         hideActions
       >
         <OrderForm
-          title="New Article"
           subtitle="lease fill the following fields to create a new Order"
           onSubmitHandler={saveOrder}
           onCancelHandler={closeModalForm}

@@ -31,7 +31,7 @@ function EditOrder() {
   return (
     <>
       <Modal
-        title="New Article"
+        title="Edit Order"
         isOpen={isDetailShown}
         cancel={{
           handler: closeModalForm,
@@ -39,8 +39,7 @@ function EditOrder() {
         hideActions
       >
         <OrderForm
-          title="New Article"
-          subtitle="lease fill the following fields to create a new Order"
+          subtitle="Here you can add or remove articles and its quantities"
           onSubmitHandler={saveEditedOrder}
           onCancelHandler={closeModalForm}
           orderData={selectedOrder}
