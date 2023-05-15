@@ -11,15 +11,30 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 // components
 import SelectList from "@/components/selectList/SelectList";
 import OrderArticleItem from "./orderArticleItem/OrderArticleItem";
-import { fetchNewOrderAction } from "../../state/orderSlice";
 import notify from "@/utils/notify";
+import { TNewOrderPayload } from "@/models/order";
 
 type TOrderArticle = {
   article: TArticle;
   quantity: number;
 };
 
-function orderForm() {
+type TOrderForm = {
+  title: string;
+  subtitle?: string;
+  // initialData?: TNewArticle | undefined;
+  onSubmitHandler: (art: TNewOrderPayload) => void;
+  onCancelHandler?: () => void;
+  priceAfterTaxes?: number;
+};
+
+function OrderForm({
+  title,
+  subtitle,
+  // initialData,
+  onSubmitHandler,
+  onCancelHandler,
+}: TOrderForm) {
   const articles = useAppSelector((state) => state.articles.list);
   const dispatch = useAppDispatch();
 
@@ -129,19 +144,17 @@ function orderForm() {
       notify.error("Quantities must be major than 0");
       return;
     }
-    dispatch(fetchNewOrderAction(newOrderPayload));
+    onSubmitHandler(newOrderPayload);
   };
 
   return (
     <form className="max-w-md" onSubmit={submitHandler}>
       <div className="border-b border-gray-900/10 pb-8">
         <span className="text-base font-semibold leading-7 text-gray-900 block">
-          {/* {title} */}
-          New Article
+          {title}
         </span>
         <span className="mt-1 text-sm leading-6 text-gray-600 mb-8 block">
-          {/* {subtitle} */}
-          Please fill the following fields to create a new Order
+          {subtitle}
         </span>
 
         <div className="col-span-full mt-2 flex items-center">
@@ -185,7 +198,7 @@ function orderForm() {
       </div>
 
       <div className="mt-6 flex items-center justify-end gap-x-6">
-        {/* {onCancelHandler && (
+        {onCancelHandler && (
           <button
             type="button"
             className="text-sm font-semibold leading-6 text-gray-900"
@@ -193,7 +206,7 @@ function orderForm() {
           >
             Cancel
           </button>
-        )} */}
+        )}
         <button
           className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           type="submit"
@@ -205,4 +218,4 @@ function orderForm() {
   );
 }
 
-export default orderForm;
+export default OrderForm;

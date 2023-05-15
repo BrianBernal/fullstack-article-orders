@@ -1,56 +1,58 @@
-// // libraries
-// import { useState } from "react";
+// libraries
+import { useState } from "react";
 
-// // models
-// import { TNewArticle } from "@/models/article";
+// models
+import { TNewOrderPayload } from "@/models/order";
 
-// // components
-// import Modal from "@/components/modal/Modal";
-// import ArticleForm from "../articleForm/ArticleForm";
-// import { useAppDispatch } from "@/redux/hooks";
-// import { fetchNewArticleAction } from "../../state/articleSlice";
+// redux
+import { fetchNewOrderAction } from "../../state/orderSlice";
+import { useAppDispatch } from "@/redux/hooks";
 
-// function NewOrder() {
-//   const dispatch = useAppDispatch();
-//   const [isOpenForm, setIsOpenForm] = useState(false);
+// components
+import Modal from "@/components/modal/Modal";
+import OrderForm from "../orderForm/OrderForm";
 
-//   const onNewArticleHandler = () => {
-//     setIsOpenForm(true);
-//   };
+function NewOrder() {
+  const dispatch = useAppDispatch();
+  const [isOpenForm, setIsOpenForm] = useState(false);
 
-//   const saveArticle = (art: TNewArticle) => {
-//     dispatch(fetchNewArticleAction(art));
-//   };
+  const onNewOrderHandler = () => {
+    setIsOpenForm(true);
+  };
 
-//   const closeModalForm = () => {
-//     setIsOpenForm(false);
-//   };
+  const saveOrder = (art: TNewOrderPayload) => {
+    dispatch(fetchNewOrderAction(art));
+  };
 
-//   return (
-//     <>
-//       <Modal
-//         title="New Article"
-//         isOpen={isOpenForm}
-//         cancel={{
-//           handler: closeModalForm,
-//         }}
-//         hideActions
-//       >
-//         <ArticleForm
-//           title=""
-//           subtitle="Please fill the following fields to create a new Article"
-//           onSubmitHandler={saveArticle}
-//           onCancelHandler={closeModalForm}
-//         />
-//       </Modal>
-//       <button
-//         onClick={onNewArticleHandler}
-//         className="bg-cyan-800 hover:bg-cyan-950 text-white font-bold py-2 px-8 rounded-full fixed bottom-16 right-16"
-//       >
-//         Crete new article +
-//       </button>
-//     </>
-//   );
-// }
+  const closeModalForm = () => {
+    setIsOpenForm(false);
+  };
 
-// export default NewOrder;
+  return (
+    <>
+      <Modal
+        title="New Article"
+        isOpen={isOpenForm}
+        cancel={{
+          handler: closeModalForm,
+        }}
+        hideActions
+      >
+        <OrderForm
+          title="New Article"
+          subtitle="lease fill the following fields to create a new Order"
+          onSubmitHandler={saveOrder}
+          onCancelHandler={closeModalForm}
+        />
+      </Modal>
+      <button
+        onClick={onNewOrderHandler}
+        className="bg-cyan-800 hover:bg-cyan-950 text-white font-bold py-2 px-8 rounded-full fixed bottom-16 right-16"
+      >
+        Crete new Order +
+      </button>
+    </>
+  );
+}
+
+export default NewOrder;

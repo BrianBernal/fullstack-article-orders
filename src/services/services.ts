@@ -1,6 +1,6 @@
 // models
 import { TArticle, TEditedArticle, TNewArticle } from "@/models/article";
-import { TNewOrder, TOrder } from "@/models/order";
+import { TNewOrderPayload, TOrder } from "@/models/order";
 
 // utils
 import {
@@ -29,7 +29,7 @@ function fetchOrders() {
   return fetchJsonFromBackend<TOrder[]>(SERVICE_URL.orders);
 }
 
-function fetchNewOrder(newOrder: TNewOrder) {
+function fetchNewOrder(newOrder: TNewOrderPayload) {
   const fetchOptions = createFetchOptions("POST", newOrder);
   return fetchJsonFromBackend<TOrder>(SERVICE_URL.orders, fetchOptions);
 }
