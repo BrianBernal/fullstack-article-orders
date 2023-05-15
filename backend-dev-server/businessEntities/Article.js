@@ -3,7 +3,7 @@ import { nanoid } from "nanoid";
 
 // utils
 import data from "../db.json" assert { type: "json" };
-import { validateTypes } from "../utils.js";
+import { calculatePriceAfterTaxes, validateTypes } from "../utils.js";
 
 const { articles } = data;
 
@@ -54,7 +54,15 @@ function isRepeatedNameArticle(name) {
 
 // ACTIONS
 function getArticles() {
-  return articles;
+  const articlesWithPriceAfterTaxes = articles.map((art) => {
+    const buildArticle = structuredClone(art);
+    buildArticle.detail.priceAfterTaxes = calculatePriceAfterTaxes(
+      art.detail.priceNoTaxes,
+      art.detail.taxPercentage
+    );
+    return buildArticle;
+  });
+  return articlesWithPriceAfterTaxes;
 }
 
 function getArticleByRef(ref = "") {

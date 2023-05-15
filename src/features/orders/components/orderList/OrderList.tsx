@@ -10,8 +10,7 @@ import OrderRow from "../orderRow/OrderRow";
 
 function OrderList() {
   const dispatch = useAppDispatch();
-  const { list: orderList, status } = useAppSelector((state) => state.orders);
-  console.log(orderList, status);
+  const { list: orderList } = useAppSelector((state) => state.orders);
 
   useEffect(() => {
     dispatch(fetchOrdersAction());
