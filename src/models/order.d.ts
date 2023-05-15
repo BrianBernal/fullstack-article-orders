@@ -18,4 +18,11 @@ type TOrder = {
   totalAfterTaxes: number;
 };
 
-export type { TOrder };
+type TNewOrder = {
+  articleRefs: {
+    quantity: number;
+    ref: string;
+  }[];
+};
+
+export type { TOrder, TNewOrder };

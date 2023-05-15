@@ -2,13 +2,13 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 // models
-import { TOrder } from "@/models/order";
+import { TNewOrder, TOrder } from "@/models/order";
 
 // utils
 import { requestStatus } from "@/redux/utils";
 import { orderService } from "@/services/services";
 
-const { fetchOrders } = orderService;
+const { fetchOrders, fetchNewOrder } = orderService;
 
 const INITIAL_ARTICLES_STATE = {
   list: [] as TOrder[],
@@ -28,6 +28,14 @@ const fetchOrdersAction = createAsyncThunk(
   }
 );
 
+const fetchNewOrderAction = createAsyncThunk(
+  "orders/fetchNewArticles",
+  (newOrder: TNewOrder, { dispatch }) => {
+    dispatch(orderSlice.actions.loading());
+    return fetchNewOrder(newOrder);
+  }
+);
+
 const orderSlice = createSlice({
   initialState: INITIAL_ARTICLES_STATE,
   name: "orders",
@@ -37,11 +45,23 @@ const orderSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchOrdersAction.fulfilled, (state, { payload }) => {
-      state.error = "";
-      state.list = payload;
-      state.status = requestStatus.succeeded;
-    });
+    builder
+      // Get order list
+      .addCase(fetchOrdersAction.fulfilled, (state, { payload }) => {
+        state.error = "";
+        state.list = payload;
+        state.status = requestStatus.succeeded;
+      })
+      .addCase(fetchOrdersAction.rejected, (state, action) => {
+        state.status = requestStatus.failed;
+        state.error = action.error.message || "Orders not found.";
+      })
+      // add new order
+      .addCase(fetchNewOrderAction.fulfilled, (state, { payload }) => {
+        state.error = "";
+        state.list.push(payload);
+        state.status = requestStatus.succeeded;
+      });
   },
 });
 

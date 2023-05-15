@@ -43,7 +43,7 @@ function ArticleForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="max-w-md">
-      <div className="">
+      <div>
         <div className="border-b border-gray-900/10 pb-8">
           <span className="text-base font-semibold leading-7 text-gray-900">
             {title}

@@ -53,37 +53,39 @@ function validateStockOrder({ articleRefs = [] }) {
   return validationValue(true, "Successful stock order validation");
 }
 
+function buildCompleteOrder(orderFromDB) {
+  const completeOrder = structuredClone(orderFromDB);
+
+  completeOrder.articles = orderFromDB.articles.map((art) => {
+    const completeArt = structuredClone(art);
+
+    completeArt.detail.priceAfterTaxes = calculatePriceAfterTaxes(
+      art.detail.priceNoTaxes,
+      art.detail.taxPercentage
+    );
+
+    return completeArt;
+  });
+
+  const totalWithoutTaxes = orderFromDB.articles.reduce(
+    (prev, curr) => prev + curr.detail.priceNoTaxes * curr.quantity,
+    0
+  );
+
+  const totalAfterTaxes = completeOrder.articles.reduce(
+    (prev, curr) => prev + curr.detail.priceAfterTaxes * curr.quantity,
+    0
+  );
+
+  completeOrder.totalWithoutTaxes = totalWithoutTaxes;
+  completeOrder.totalAfterTaxes = totalAfterTaxes;
+
+  return completeOrder;
+}
+
 // ACTIONS
 function getOrders() {
-  const buildOrders = orders.map((order) => {
-    const completeOrder = structuredClone(order);
-
-    completeOrder.articles = order.articles.map((art) => {
-      const completeArt = structuredClone(art);
-
-      completeArt.detail.priceAfterTaxes = calculatePriceAfterTaxes(
-        art.detail.priceNoTaxes,
-        art.detail.taxPercentage
-      );
-
-      return completeArt;
-    });
-
-    const totalWithoutTaxes = order.articles.reduce(
-      (prev, curr) => prev + curr.detail.priceNoTaxes * curr.quantity,
-      0
-    );
-
-    const totalAfterTaxes = completeOrder.articles.reduce(
-      (prev, curr) => prev + curr.detail.priceAfterTaxes * curr.quantity,
-      0
-    );
-
-    completeOrder.totalWithoutTaxes = totalWithoutTaxes;
-    completeOrder.totalAfterTaxes = totalAfterTaxes;
-
-    return completeOrder;
-  });
+  const buildOrders = orders.map((order) => buildCompleteOrder(order));
 
   return buildOrders;
 }
@@ -130,7 +132,7 @@ function insertOrder(order) {
   const successfulOrder = { id: nanoid(), articles: orderArticles };
   orders.push(successfulOrder);
 
-  return successfulOrder;
+  return buildCompleteOrder(successfulOrder);
 }
 
 function updateOrder(orderWithId) {
