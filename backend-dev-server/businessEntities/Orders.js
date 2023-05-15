@@ -253,7 +253,7 @@ function updateOrder(orderWithId) {
 
   prevOrder.articles = updatedOrderArticles;
 
-  return structuredClone(prevOrder);
+  return buildCompleteOrder(prevOrder);
 }
 
 export { validateOrderTypes, validateStockOrder }; // VALIDATORS

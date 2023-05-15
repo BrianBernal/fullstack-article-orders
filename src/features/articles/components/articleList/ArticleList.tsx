@@ -1,12 +1,19 @@
-import ArticleRow from "./articleRow/ArticleRow";
-import { TArticle } from "@/models/article";
+// libraries
 import { useEffect } from "react";
+
+// models
+import { TArticle } from "@/models/article";
+
+// redux
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { requestStatus } from "@/redux/utils";
 import {
   fetchArticlesAction,
   setSelectedArticle,
 } from "../../state/articleSlice";
-import { requestStatus } from "@/redux/utils";
+
+// components
+import ArticleRow from "./articleRow/ArticleRow";
 
 function ArticleList() {
   const dispatch = useAppDispatch();

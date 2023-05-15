@@ -1,14 +1,14 @@
 // libraries
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 // models
-import { TNewOrder, TOrder } from "@/models/order";
+import { TEditOrderPayload, TNewOrderPayload, TOrder } from "@/models/order";
 
 // utils
 import { requestStatus } from "@/redux/utils";
 import { orderService } from "@/services/services";
 
-const { fetchOrders, fetchNewOrder } = orderService;
+const { fetchOrders, fetchNewOrder, fetchEditOrder } = orderService;
 
 const INITIAL_ARTICLES_STATE = {
   list: [] as TOrder[],
@@ -30,9 +30,17 @@ const fetchOrdersAction = createAsyncThunk(
 
 const fetchNewOrderAction = createAsyncThunk(
   "orders/fetchNewArticles",
-  (newOrder: TNewOrder, { dispatch }) => {
+  (newOrder: TNewOrderPayload, { dispatch }) => {
     dispatch(orderSlice.actions.loading());
     return fetchNewOrder(newOrder);
+  }
+);
+
+const fetchEditOrderAction = createAsyncThunk(
+  "orders/fetchEditArticles",
+  (editedOrder: TEditOrderPayload, { dispatch }) => {
+    dispatch(orderSlice.actions.loading());
+    return fetchEditOrder(editedOrder);
   }
 );
 
@@ -42,6 +50,12 @@ const orderSlice = createSlice({
   reducers: {
     loading(state) {
       (state.error = ""), (state.status = requestStatus.loading);
+    },
+    setSelectedOrder(state, { payload }: PayloadAction<string>) {
+      (state.ui.selectedOrderId = payload), (state.ui.isShowDetail = true);
+    },
+    closeShowDetail(state) {
+      state.ui.isShowDetail = false;
     },
   },
   extraReducers: (builder) => {
@@ -64,11 +78,25 @@ const orderSlice = createSlice({
       })
       .addCase(fetchNewOrderAction.rejected, (state, action) => {
         state.status = requestStatus.failed;
-        state.error = action.error.message || "The order was not processed.";
+        state.error = action.error.message || "The nwe order was not saved.";
+      })
+      //edit order
+      .addCase(fetchEditOrderAction.fulfilled, (state, { payload }) => {
+        const orderIndex = state.list.findIndex(
+          (order) => order.id === payload.id
+        );
+        state.list[orderIndex] = payload;
+        state.error = "";
+        state.status = requestStatus.succeeded;
+      })
+      .addCase(fetchEditOrderAction.rejected, (state, action) => {
+        state.status = requestStatus.failed;
+        state.error = action.error.message || "The edition was not saved.";
       });
   },
 });
 
 export default orderSlice.reducer;
-export const { loading } = orderSlice.actions;
-export { fetchOrdersAction, fetchNewOrderAction }; // async actions
+export const { loading, closeShowDetail, setSelectedOrder } =
+  orderSlice.actions;
+export { fetchOrdersAction, fetchNewOrderAction, fetchEditOrderAction }; // async actions

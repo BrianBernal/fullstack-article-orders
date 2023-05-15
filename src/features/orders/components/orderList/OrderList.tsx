@@ -2,8 +2,11 @@
 import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 
+// models
+import { TOrderDataRow } from "@/models/order";
+
 // redux
-import { fetchOrdersAction } from "../../state/orderSlice";
+import { fetchOrdersAction, setSelectedOrder } from "../../state/orderSlice";
 
 // components
 import OrderRow from "../orderRow/OrderRow";
@@ -15,15 +18,24 @@ function OrderList() {
   useEffect(() => {
     dispatch(fetchOrdersAction());
   }, []);
+
+  const editButtonHandler = (orderData: TOrderDataRow) => {
+    dispatch(setSelectedOrder(orderData.id));
+  };
+
   return (
-    <ul role="list" className="divide-y divide-gray-300 max-w-lg mx-auto">
+    <ul className="divide-y divide-gray-300 max-w-lg mx-auto">
       {orderList.map(({ id, totalAfterTaxes, totalWithoutTaxes }) => {
+        const orderData = {
+          id,
+          priceBeforeTaxes: totalWithoutTaxes,
+          totalPrice: totalAfterTaxes,
+        };
         return (
           <OrderRow
             key={id}
-            id={id}
-            priceBeforeTaxes={totalWithoutTaxes}
-            totalPrice={totalAfterTaxes}
+            orderData={orderData}
+            editAction={editButtonHandler}
           />
         );
       })}

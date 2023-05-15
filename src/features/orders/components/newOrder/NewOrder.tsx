@@ -2,7 +2,7 @@
 import { useState } from "react";
 
 // models
-import { TNewOrderPayload } from "@/models/order";
+import { TArticleRefs } from "@/models/order";
 
 // redux
 import { fetchNewOrderAction } from "../../state/orderSlice";
@@ -20,8 +20,8 @@ function NewOrder() {
     setIsOpenForm(true);
   };
 
-  const saveOrder = (art: TNewOrderPayload) => {
-    dispatch(fetchNewOrderAction(art));
+  const saveOrder = (articleRefs: TArticleRefs[]) => {
+    dispatch(fetchNewOrderAction({ articleRefs }));
   };
 
   const closeModalForm = () => {

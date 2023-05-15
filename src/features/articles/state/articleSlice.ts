@@ -87,8 +87,8 @@ const articleSlice = createSlice({
         const articleIndex = state.list.findIndex(
           (art) => art.detail.ref === payload.detail.ref
         );
-        state.error = "";
         state.list[articleIndex] = payload;
+        state.error = "";
         state.status = requestStatus.succeeded;
       })
       .addCase(fetchEditArticleAction.rejected, (state, action) => {

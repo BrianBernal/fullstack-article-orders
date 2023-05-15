@@ -11,6 +11,7 @@ type TOrderArticle = {
   quantity: number;
   detail: TOrderArticleDetail;
 };
+
 type TOrder = {
   id: string;
   articles: TOrderArticle[];
@@ -18,11 +19,29 @@ type TOrder = {
   totalAfterTaxes: number;
 };
 
-type TNewOrderPayload = {
-  articleRefs: {
-    quantity: number;
-    ref: string;
-  }[];
+type TArticleRefs = {
+  quantity: number;
+  ref: string;
 };
 
-export type { TOrder, TNewOrderPayload };
+type TNewOrderPayload = {
+  articleRefs: TArticleRefs[];
+};
+
+type TEditOrderPayload = {
+  id: string;
+  articleRefs: TArticleRefs[];
+};
+type TOrderDataRow = {
+  id: string;
+  priceBeforeTaxes: number;
+  totalPrice: number;
+};
+
+export type {
+  TOrder,
+  TArticleRefs,
+  TNewOrderPayload,
+  TEditOrderPayload,
+  TOrderDataRow,
+};

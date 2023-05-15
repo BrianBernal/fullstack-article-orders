@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 
 // models
 import { TArticle } from "@/models/article";
+import { TArticleRefs, TOrder } from "@/models/order";
 
 // redux
 import { fetchArticlesAction } from "@/features/articles/state/articleSlice";
@@ -12,7 +13,6 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import SelectList from "@/components/selectList/SelectList";
 import OrderArticleItem from "./orderArticleItem/OrderArticleItem";
 import notify from "@/utils/notify";
-import { TNewOrderPayload } from "@/models/order";
 
 type TOrderArticle = {
   article: TArticle;
@@ -22,8 +22,8 @@ type TOrderArticle = {
 type TOrderForm = {
   title: string;
   subtitle?: string;
-  // initialData?: TNewArticle | undefined;
-  onSubmitHandler: (art: TNewOrderPayload) => void;
+  orderData?: TOrder;
+  onSubmitHandler: (art: TArticleRefs[], orderId?: string) => void;
   onCancelHandler?: () => void;
   priceAfterTaxes?: number;
 };
@@ -31,7 +31,7 @@ type TOrderForm = {
 function OrderForm({
   title,
   subtitle,
-  // initialData,
+  orderData,
   onSubmitHandler,
   onCancelHandler,
 }: TOrderForm) {
@@ -45,9 +45,27 @@ function OrderForm({
     }));
   };
 
+  const getInitialOrderArticleList = (): TOrderArticle[] => {
+    if (!orderData) return [];
+
+    const mapToArticle = orderData.articles.map((art) => {
+      return {
+        quantity: art.quantity,
+        article: {
+          detail: art.detail,
+          stock: 0,
+        },
+      };
+    });
+
+    return mapToArticle;
+  };
+
   const [selectorValues, setSelectorValues] = useState(getSelectorValues());
   const [selectedArticle, setSelectedArticle] = useState(selectorValues[0]);
-  const [orderArticleList, setOrderArticleList] = useState<TOrderArticle[]>([]);
+  const [orderArticleList, setOrderArticleList] = useState<TOrderArticle[]>(
+    getInitialOrderArticleList()
+  );
 
   const totalBeforeTaxes = orderArticleList.reduce(
     (prev, curr) => prev + curr.article.detail.priceNoTaxes * curr.quantity,
@@ -72,8 +90,9 @@ function OrderForm({
     }
   }, [articles.length]);
 
-  if (!selectedArticle)
+  if (!selectedArticle) {
     return <span className="block m-4">Loading articles...</span>;
+  }
 
   const selectorArticleHandler = (
     newSelectedArticle: typeof selectedArticle
@@ -130,21 +149,19 @@ function OrderForm({
       return;
     }
     let someQuantityIsZero = false;
-    const newOrderPayload = {
-      articleRefs: orderArticleList.map(({ article, quantity }) => {
-        const orderItemRef = {
-          quantity,
-          ref: article.detail.ref,
-        };
-        if (quantity <= 0) someQuantityIsZero = true;
-        return orderItemRef;
-      }),
-    };
+    const articleRefs = orderArticleList.map(({ article, quantity }) => {
+      const orderItemRef = {
+        quantity,
+        ref: article.detail.ref,
+      };
+      if (quantity <= 0) someQuantityIsZero = true;
+      return orderItemRef;
+    });
     if (someQuantityIsZero) {
       notify.error("Quantities must be major than 0");
       return;
     }
-    onSubmitHandler(newOrderPayload);
+    onSubmitHandler(articleRefs, orderData?.id);
   };
 
   return (
@@ -168,7 +185,7 @@ function OrderForm({
           </div>
         </div>
       </div>
-      <ul role="list" className="divide-y divide-gray-300 max-w-lg mx-auto">
+      <ul className="divide-y divide-gray-300 max-w-lg mx-auto">
         {orderArticleList.map(({ article, quantity }) => {
           const { name, priceAfterTaxes, priceNoTaxes, ref } = article.detail;
           return (
