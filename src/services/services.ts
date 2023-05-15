@@ -30,7 +30,7 @@ function fetchOrders() {
 }
 
 function fetchNewOrder(newOrder: TNewOrder) {
-  const fetchOptions = createFetchOptions("PATCH", newOrder);
+  const fetchOptions = createFetchOptions("POST", newOrder);
   return fetchJsonFromBackend<TOrder>(SERVICE_URL.orders, fetchOptions);
 }
 

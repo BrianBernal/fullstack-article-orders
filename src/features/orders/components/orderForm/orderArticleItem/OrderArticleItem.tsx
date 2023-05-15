@@ -3,7 +3,8 @@ type TOrderRow = {
   articleRef: string;
   priceBeforeTaxes: number;
   priceAfterTaxes: number;
-  quantity?: number;
+  quantity: number;
+  updateItemQuantity: (ref: string, quantity: number) => void;
   deleteAction: (ref: string) => void;
 };
 function OrderArticleItem({
@@ -11,14 +12,18 @@ function OrderArticleItem({
   articleRef,
   priceBeforeTaxes,
   priceAfterTaxes,
-  quantiy,
+  quantity,
+  updateItemQuantity,
   deleteAction,
 }: TOrderRow) {
-  //   const { detail } = article;
-  //   const { name, description, priceNoTaxes } = detail;
-
   const deleteHandler = () => {
     deleteAction(articleRef);
+  };
+
+  const quantityHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newQuantity = Number(e.target.value);
+    if (!Number.isInteger(newQuantity)) return;
+    updateItemQuantity(articleRef, newQuantity);
   };
 
   return (
@@ -30,16 +35,20 @@ function OrderArticleItem({
             <span className="mr-2 text-sm leading-6 text-gray-900">
               Quantity:
             </span>
-            <input className="w-14 p-1 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600" />
+            <input
+              onChange={quantityHandler}
+              value={quantity}
+              className="w-14 p-1 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
+            />
           </div>
         </div>
       </div>
       <div className="sm:flex sm:flex-col sm:items-end">
         <p className="mt-1 text-xs leading-5 text-gray-500">
-          Price before taxes: $ {priceBeforeTaxes}
+          Price before taxes: $ {priceBeforeTaxes * quantity}
         </p>
         <p className="text-sm leading-6 text-gray-900">
-          Price after taxes: $ {priceAfterTaxes}
+          Price after taxes: $ {priceAfterTaxes * quantity}
         </p>
       </div>
       <div className="sm:flex sm:flex-col sm:items-end">

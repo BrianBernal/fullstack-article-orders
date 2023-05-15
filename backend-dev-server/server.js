@@ -126,7 +126,7 @@ server.post("/orders", (req, res) => {
   }
 
   // SUCCESSFUL RESPONSE
-  return res.status(201).send({ createdOrder: insertedOrder });
+  return res.status(201).send(insertedOrder);
 });
 
 server.patch("/orders", (req, res) => {

@@ -61,10 +61,14 @@ const orderSlice = createSlice({
         state.error = "";
         state.list.push(payload);
         state.status = requestStatus.succeeded;
+      })
+      .addCase(fetchNewOrderAction.rejected, (state, action) => {
+        state.status = requestStatus.failed;
+        state.error = action.error.message || "The order was not processed.";
       });
   },
 });
 
 export default orderSlice.reducer;
 export const { loading } = orderSlice.actions;
-export { fetchOrdersAction }; // async actions
+export { fetchOrdersAction, fetchNewOrderAction }; // async actions
