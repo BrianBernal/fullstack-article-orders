@@ -1,6 +1,6 @@
 # Articles and Orders exercise
 
-This is a fullstack project mainly oriented to the front development built with the following stack:
+This is a fullstack project with clean architecture mainly oriented to the front development built with the following stack:
 
 - Reactjs
 - [Vite](https://vitejs.dev/)
@@ -21,6 +21,10 @@ This project uses [pnpm](https://pnpm.io/7.x/installation) as package manager. I
 
 `npm install -g pnpm`
 
+After be sure to have pnpm in your system run:
+
+`pnpm install`
+
 ## Run in local
 
 1. Open and locate the console in the root project and then run the following command:
@@ -31,4 +35,4 @@ This project uses [pnpm](https://pnpm.io/7.x/installation) as package manager. I
 
    `npm run dev`
 
-   Then in a browser open the url pointed out at the console
+   Then open in a browser the url pointed out at the console
