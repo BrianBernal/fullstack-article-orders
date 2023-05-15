@@ -1,6 +1,6 @@
 # Articles and Orders exercise
 
-This is a fullstack project with clean architecture mainly oriented to the front development built with the following stack:
+This is a fullstack project mainly oriented to the front development built with the following stack:
 
 - Reactjs
 - [Vite](https://vitejs.dev/)
@@ -9,6 +9,7 @@ This is a fullstack project with clean architecture mainly oriented to the front
 - [json-server](https://www.npmjs.com/package/json-server)
 - [React router](https://reactrouter.com/en/main)
 - [react-hook-form](https://react-hook-form.com/)
+- [Redux Toolkit](https://redux-toolkit.js.org/)
 - [fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API)
 - [tailwindcss](https://tailwindcss.com/)
 - [@headlessui/react](https://headlessui.com/react/menu)
