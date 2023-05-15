@@ -1,8 +1,21 @@
-import { TArticle } from "./article";
+type TOrderArticleDetail = {
+  ref: string;
+  name: string;
+  description: string;
+  priceNoTaxes: number;
+  taxPercentage: number;
+  priceAfterTaxes: number;
+};
 
+type TOrderArticle = {
+  quantity: number;
+  detail: TOrderArticleDetail;
+};
 type TOrder = {
   id: string;
-  articles: TArticle[];
+  articles: TOrderArticle[];
+  totalWithoutTaxes: number;
+  totalAfterTaxes: number;
 };
 
 export type { TOrder };

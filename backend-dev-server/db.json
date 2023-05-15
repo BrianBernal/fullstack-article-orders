@@ -6,7 +6,7 @@
         "ref": "first-art",
         "name": "mouse",
         "description": "Ergonomic mouse to care the wrist",
-        "priceNoTaxes": 30,
+        "priceNoTaxes": 100,
         "taxPercentage": 10
       }
     },
@@ -16,7 +16,7 @@
         "ref": "second-art",
         "name": "mechanical keyboard",
         "description": "Mechanical keyboard, cherry mx red, for cool people",
-        "priceNoTaxes": 90,
+        "priceNoTaxes": 200,
         "taxPercentage": 10
       }
     }
@@ -31,7 +31,7 @@
             "ref": "first-art",
             "name": "mouse",
             "description": "Ergonomic mouse to care the wrist",
-            "priceNoTaxes": 30,
+            "priceNoTaxes": 100,
             "taxPercentage": 10
           }
         },
@@ -41,7 +41,7 @@
             "ref": "second-art",
             "name": "mechanical keyboard",
             "description": "Mechanical keyboard, cherry mx red, for cool people",
-            "priceNoTaxes": 90,
+            "priceNoTaxes": 200,
             "taxPercentage": 10
           }
         }
@@ -56,7 +56,7 @@
             "ref": "first-art",
             "name": "mouse",
             "description": "Ergonomic mouse to care the wrist",
-            "priceNoTaxes": 30,
+            "priceNoTaxes": 100,
             "taxPercentage": 10
           }
         }

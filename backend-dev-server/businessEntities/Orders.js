@@ -2,7 +2,7 @@ import { nanoid } from "nanoid";
 
 // utils
 import data from "../db.json" assert { type: "json" };
-import { validationValue } from "../utils.js";
+import { validationValue, calculatePriceAfterTaxes } from "../utils.js";
 
 // Business logic
 import {
@@ -55,7 +55,37 @@ function validateStockOrder({ articleRefs = [] }) {
 
 // ACTIONS
 function getOrders() {
-  return orders;
+  const buildOrders = orders.map((order) => {
+    const completeOrder = structuredClone(order);
+
+    completeOrder.articles = order.articles.map((art) => {
+      const completeArt = structuredClone(art);
+
+      completeArt.detail.priceAfterTaxes = calculatePriceAfterTaxes(
+        art.detail.priceNoTaxes,
+        art.detail.taxPercentage
+      );
+
+      return completeArt;
+    });
+
+    const totalWithoutTaxes = order.articles.reduce(
+      (prev, curr) => prev + curr.detail.priceNoTaxes * curr.quantity,
+      0
+    );
+
+    const totalAfterTaxes = completeOrder.articles.reduce(
+      (prev, curr) => prev + curr.detail.priceAfterTaxes * curr.quantity,
+      0
+    );
+
+    completeOrder.totalWithoutTaxes = totalWithoutTaxes;
+    completeOrder.totalAfterTaxes = totalAfterTaxes;
+
+    return completeOrder;
+  });
+
+  return buildOrders;
 }
 
 function getOrderById(id) {
