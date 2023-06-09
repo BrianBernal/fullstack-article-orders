@@ -1,0 +1,15 @@
+[x] Diseñar flujos/diagramas de modelo articulos y pedidos
+[x] Crear entidades en bd.json de json-server
+[x] Crear middlewares de restricciones de logica de negocio
+[x] Crear mock design del front acorde con lo anterior
+
+[x] Implementar articles
+[x] Implementar orders
+[x] Escribir readme
+
+// extras:
+
+[] Algunos unit tests
+[] Implementar internacionalizacion
+[] Implementar docker
+[] Crear rama hexagonal y hacer refactor
